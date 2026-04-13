@@ -49,4 +49,48 @@ class AuthController
         header("Location: index.php?action=login");
         exit;
     }
+    public function alterarSenha()
+    {
+        require __DIR__ . '/../views/alterar_senha.php';
+    }
+
+    public function salvarSenha()
+    {
+        $pdo = conectarBanco();
+
+        $usuario_id = $_SESSION['usuario_id'];
+
+        $senhaAtual = $_POST['senha_atual'];
+        $novaSenha = $_POST['nova_senha'];
+        $confirmar = $_POST['confirmar_senha'];
+
+        $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ?");
+        $stmt->execute([$usuario_id]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$usuario || !password_verify($senhaAtual, $usuario['senha'])) {
+            $_SESSION['msg'] = "Senha atual incorreta!";
+            $_SESSION['msg_tipo'] = "danger";
+            header("Location: index.php?action=alterar_senha");
+            exit;
+        }
+
+        if ($novaSenha !== $confirmar) {
+            $_SESSION['msg'] = "As senhas não coincidem!";
+            $_SESSION['msg_tipo'] = "danger";
+            header("Location: index.php?action=alterar_senha");
+            exit;
+        }
+
+        $novaHash = password_hash($novaSenha, PASSWORD_DEFAULT);
+
+        $stmt = $pdo->prepare("UPDATE usuarios SET senha = ? WHERE id = ?");
+        $stmt->execute([$novaHash, $usuario_id]);
+
+        $_SESSION['msg'] = "Senha alterada com sucesso!";
+        $_SESSION['msg_tipo'] = "success";
+
+        header("Location: index.php?action=alterar_senha");
+        exit;
+    }
 }

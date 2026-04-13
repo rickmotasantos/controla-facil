@@ -52,6 +52,10 @@ if ($action == 'login') {
     (new VendaController())->buscarProduto();
 }elseif ($action == 'home') {
     require_once BASE_PATH . '/app/views/home.php';
+}elseif($action == 'alterar_senha') {
+    (new AuthController())->alterarSenha();
+}elseif($action == 'salvar_senha') {
+    (new AuthController())->salvarSenha();
 } else {
     (new ProdutoController())->index();
 }
