@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="shortcut icon" href="assets/favicon.png" type="image/png">
     <title>Produtos</title>
 </head>
@@ -12,22 +13,42 @@
 </html>
 
 <body>
-    <div class="bg-dark text-white position-fixed top-0 start-0 w-100 d-flex align-items-center" style="height: 60px; z-index:1000;">
-        <div class="container d-flex align-items-center justify-content-between py-2">
-            <div></div>
+    <div class="dropdown">
+        <button class="btn btn-dark text-white d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
 
-            <div class="text-center text-white fw-bold d-flex align-items-center gap-1">
-                <div>Usuário:</div><?= $_SESSION['usuario_nome'] ?? 'Usuario:' ?>
-            </div>
+            <i class="bi bi-person-circle" style="font-size: 20px;"></i>
 
-            <div>
-                <a href="index.php?action=logout" onclick="return confirm('Tem certeza que deseja sair')" class="btn btn-outline-danger">
-                    Sair
+            <span><?= $_SESSION['usuario_nome'] ?? 'Usuário' ?></span>
+
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-end">
+
+            <li>
+                <a class="dropdown-item" href="index.php?action=perfil">
+                    <i class="bi bi-person"></i> Perfil
                 </a>
-            </div>
-        </div>
+            </li>
+
+            <li>
+                <a class="dropdown-item" href="index.php?action=alterar_senha">
+                    <i class="bi bi-key"></i> Alterar senha
+                </a>
+            </li>
+
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+
+            <li>
+                <a class="dropdown-item text-danger" href="index.php?action=logout" onclick="return confirm('Tem certeza que deseja sair?')">
+                    <i class="bi bi-box-arrow-right"></i> Sair
+                </a>
+            </li>
+
+        </ul>
     </div>
-    <div class="container" style="margin-top: 80px;">
+    <div class="container">
 
         <h3 class="mb-3 text-center text-md-start">Sistema Comércio</h3>
 
@@ -115,7 +136,8 @@
 
     </div>
 </body>
-<script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+
     setTimeout(() => {
         const alert = document.querySelector('.alert');
         if (alert) alert.remove();
