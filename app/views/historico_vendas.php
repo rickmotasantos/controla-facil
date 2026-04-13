@@ -89,7 +89,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
         <div class="d-grid gap-2 d-md-flex mb-3">
 
-            <a class="btn btn-primary" href="index.php">Home</a>
+            <a class="btn btn-primary" href="index.php?action=produto">Produto</a>
             <a class="btn btn-success" href="index.php?action=vendas">Venda</a>
             <a class="btn btn-warning" href="index.php?action=historico">Histórico</a>
             <a class="btn btn-dark" href="index.php?action=dashboard">Dashboard</a>

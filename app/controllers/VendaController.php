@@ -249,11 +249,13 @@ class VendaController
         WHERE empresa_id = ?
         AND (nome LIKE ? OR codigo LIKE ?)
     ");
-
         $like = "%$busca%";
-
         $stmt->execute([$empresa_id, $like, $like]);
 
-        echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        header('Content-Type: application/json');
+        echo json_encode($produtos);
+        exit;
     }
 }

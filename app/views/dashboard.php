@@ -34,7 +34,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
         <div class="d-grid gap-2 d-md-flex mb-3">
 
-            <a class="btn btn-primary" href="index.php">Home</a>
+            <a class="btn btn-primary" href="index.php?action=produto">Produto</a>
             <a class="btn btn-success" href="index.php?action=vendas">Venda</a>
             <a class="btn btn-warning" href="index.php?action=historico">Histórico</a>
             <a class="btn btn-dark" href="index.php?action=dashboard">Dashboard</a>
@@ -57,13 +57,6 @@ require_once __DIR__ . '/../middlewares/auth.php';
                 <div class="card p-3">
                     <h5>Total Mês</h5>
                     <h3>R$ <?= $totalMes['total'] ?? 0 ?></h3>
-                </div>
-            </div>
-
-            <div class="col-md-4 text-center">
-                <div class="card p-3">
-                    <h5>Produto top</h5>
-                    <h3><?= $produtoTop['nome'] ?? 'nenhum' ?></h3>
                 </div>
             </div>
         </div>

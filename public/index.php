@@ -1,9 +1,11 @@
 <?php
 session_start();
 
-require_once __DIR__ . '/../app/controllers/ProdutoController.php';
-require_once __DIR__ . '/../app/controllers/VendaController.php';
-require_once __DIR__ . '/../app/controllers/AuthController.php';
+define('BASE_PATH', dirname(__DIR__));
+
+require_once BASE_PATH . '/app/controllers/ProdutoController.php';
+require_once BASE_PATH . '/app/controllers/VendaController.php';
+require_once BASE_PATH . '/app/controllers/AuthController.php';
 
 
 $action = $_GET['action'] ?? $_POST['action'] ?? 'home';
@@ -49,7 +51,7 @@ if ($action == 'login') {
 } elseif ($action == 'buscarProduto') {
     (new VendaController())->buscarProduto();
 }elseif ($action == 'home') {
-    require_once __DIR__ . '/../app/views/home.php';
+    require_once BASE_PATH . '/app/views/home.php';
 } else {
     (new ProdutoController())->index();
 }

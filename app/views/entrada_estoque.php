@@ -81,32 +81,39 @@ require_once __DIR__ . '/../middlewares/auth.php';
             const nomeProduto = document.getElementById('nome_produto');
             const estoqueProduto = document.getElementById('estoque_produto');
 
-            inputCodigo.addEventListener('keyup', async function() {
+            let timer;
+
+            inputCodigo.addEventListener('keyup', function() {
+
+                clearTimeout(timer);
 
                 let codigo = this.value;
 
-                if (codigo.length < 1) {
-                    nomeProduto.value = '';
-                    estoqueProduto.value = '';
-                    return;
-                }
+                timer = setTimeout(async () => {
 
-                try {
-                    const res = await fetch('index.php?action=buscarProduto&busca=' + codigo);
-                    const produtos = await res.json();
-
-                    if (produtos.length > 0) {
-                        nomeProduto.value = produtos[0].nome;
-                        estoqueProduto.value = produtos[0].quantidade;
-                    } else {
-                        nomeProduto.value = 'Produto não encontrado';
+                    if (!codigo || codigo.length < 3) {
+                        nomeProduto.value = '';
                         estoqueProduto.value = '';
+                        return;
                     }
 
-                } catch (e) {
-                    nomeProduto.value = 'Erro na busca';
-                    estoqueProduto.value = '';
-                }
+                    try {
+                        const res = await fetch('index.php?action=buscarProduto&busca=' + encodeURIComponent(codigo));
+                        const produtos = await res.json();
+
+                        if (produtos.length > 0) {
+                            nomeProduto.value = produtos[0].nome;
+                            estoqueProduto.value = produtos[0].quantidade;
+                        } else {
+                            nomeProduto.value = 'Produto não encontrado';
+                            estoqueProduto.value = '';
+                        }
+
+                    } catch (e) {
+                        console.log("ERRO:", e);
+                    }
+
+                }, 300);
 
             });
 
