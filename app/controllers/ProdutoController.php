@@ -95,11 +95,18 @@ class ProdutoController
         $tipo = $_SESSION['tipo'];
 
         if ($tipo === 'admin') {
-            $stmt = $pdo->prepare("SELECT * FROM produtos WHERE codigo LIKE ? OR nome LIKE ?");
+            $stmt = $pdo->prepare("
+        SELECT * FROM produtos 
+        WHERE codigo LIKE ? OR nome LIKE ?
+    ");
             $stmt->execute(["%$codigo%", "%$codigo%"]);
         } else {
-            $stmt = $pdo->prepare("SELECT * FROM produtos WHERE codigo LIKE ? AND empresa_id = ?");
-            $stmt->execute(["%$codigo%", "%codigo%", $empresa_id]);
+            $stmt = $pdo->prepare("
+        SELECT * FROM produtos 
+        WHERE (codigo LIKE ? OR nome LIKE ?) 
+        AND empresa_id = ?
+    ");
+            $stmt->execute(["%$codigo%", "%$codigo%", $empresa_id]);
         }
 
         $produto = $stmt->fetch(PDO::FETCH_ASSOC);
