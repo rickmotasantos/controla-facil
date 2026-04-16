@@ -13,8 +13,8 @@
 </html>
 
 <body>
-    <div class="dropdown">
-        <button class="btn btn-dark text-white d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    <div class="dropdown bg-primary p-2 text-end">
+        <button class="btn text-white d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
 
             <i class="bi bi-person-circle" style="font-size: 20px;"></i>
 
@@ -22,7 +22,7 @@
 
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end">
+        <ul class="dropdown-menu dropdown-menu-end mt-2">
 
             <li>
                 <a class="dropdown-item" href="index.php?action=perfil">
@@ -48,11 +48,10 @@
 
         </ul>
     </div>
-    <div class="container">
+    <div class="container p-2">
+        <h3 class="mb-3 text-center">Sistema Comércio</h3>
 
-        <h3 class="mb-3 text-center text-md-start">Sistema Comércio</h3>
-
-        <div class="d-grid gap-2 d-md-flex mb-3">
+        <div class="gap-2 d-flex justify-content-center flex-wrap mb-3">
 
             <a class="btn btn-primary" href="index.php">Home</a>
             <a class="btn btn-success" href="index.php?action=vendas">Venda</a>
@@ -71,7 +70,7 @@
         <?php unset($_SESSION['msg'], $_SESSION['msg_tipo']);
         endif; ?>
 
-        <h5 class="row g-2 mb-4">Cadastrar Produtos</h5>
+        <h5 class="m-2">Cadastrar Produtos</h5>
 
         <form method="post" action="index.php?action=salvar" class="row g-2 mb-4">
 
@@ -121,7 +120,7 @@
                             <td data-label="Qtd"><?= $p['quantidade'] ?></td>
                             <td data-label="Ações" class="d-flex flex-wrap gap-2 justify-content-center">
                                 <div class="acoes-btns">
-                                    <a href="index.php?action=editar&id=<?= $p['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
+                                    <a href="index.php?action=editar&id=<?= $p['id'] ?>" class="mb-1 btn btn-warning btn-sm">Editar</a>
                                     <a href="index.php?action=excluir&id=<?= $p['id'] ?>"
                                         onclick="return confirm('Tem certeza?')"
                                         class="btn btn-danger btn-sm">Excluir</a>
@@ -137,7 +136,8 @@
     </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
-
+</script>
+<script>
     setTimeout(() => {
         const alert = document.querySelector('.alert');
         if (alert) alert.remove();

@@ -8,13 +8,14 @@ require_once __DIR__ . '/../middlewares/auth.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="shortcut icon" href="assets/favicon.png" type="image/png">
     <title>Dashboard</title>
 </head>
 
 <body>
-    <div class="dropdown">
-        <button class="btn btn-dark text-white d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    <div class="dropdown bg-primary text-end p-2">
+        <button class="btn text-white d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
 
             <i class="bi bi-person-circle" style="font-size: 20px;"></i>
 
@@ -48,11 +49,10 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
         </ul>
     </div>
-    <div class="container">
+    <div class="container d-flex flex-column justify-content-center p-3">
+        <h3 class="mb-3 text-center">Sistema Comércio</h3>
 
-        <h1 class="mb-4">Sistema Comércio</h1>
-
-        <div class="d-grid gap-2 d-md-flex mb-3">
+        <div class="gap-2 d-flex justify-content-center flex-wrap mb-3">
 
             <a class="btn btn-primary" href="index.php?action=produto">Produto</a>
             <a class="btn btn-success" href="index.php?action=vendas">Venda</a>
@@ -64,7 +64,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
         <hr>
 
-        <div class="row">
+        <div class="row d-flex justify-content-center">
 
             <div class="col-md-4">
                 <div class="card p-3 text-center">

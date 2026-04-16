@@ -21,10 +21,15 @@ class Produto
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function buscarPorId($id)
+    public function buscarPorId($id, $empresa_id, $tipo)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM produtos WHERE id = ?");
-        $stmt->execute([$id]);
+        if($tipo === 'admin'){
+            $stmt = $this->pdo->prepare("SELECT * FROM produtos WHERE id = ?");
+            $stmt->execute([$id]);
+        }else{
+            $stmt = $this->pdo->prepare("SELECT * FROM produtos WHERE id = ? AND empresa_id = ?");
+            $stmt->execute([$id, $empresa_id]);
+        }
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -52,5 +57,15 @@ class Produto
         $stmt->execute([$empresa_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    }
+
+    public function listarComFiltro($empresa_id, $tipo){
+        if($tipo === 'admin'){
+            return $this->pdo->query("SELECT * FROM produtos")->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        $stmt = $this->pdo->prepare("SELECT * FROM produtos WHERE empresa_id = ?");
+        $stmt->execute([$empresa_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

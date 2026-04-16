@@ -8,13 +8,14 @@ require_once __DIR__ . '/../middlewares/auth.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="shortcut icon" href="assets/favicon.png" type="image/png">
     <title>Entrada Estoque</title>
 </head>
 
 <body>
-    <div class="dropdown">
-        <button class="btn btn-dark text-white d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    <div class="dropdown bg-primary text-end p-2">
+        <button class="btn text-white d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
 
             <i class="bi bi-person-circle" style="font-size: 20px;"></i>
 
@@ -49,12 +50,21 @@ require_once __DIR__ . '/../middlewares/auth.php';
         </ul>
     </div>
     <div class="container">
+        <?php if (!empty($_SESSION['msg'])): ?>
 
-        <h2 class="mb-4">Entrada de Estoque</h2>
+            <div class="alert alert-<?= $_SESSION['msg_tipo'] ?? 'success' ?> mt-3">
+                <?= $_SESSION['msg']; ?>
+            </div>
 
-        <div class="d-grid gap-2 d-md-flex mb-3">
+            <?php unset($_SESSION['msg']);
+            unset($_SESSION['msg_tipo']);
+            ?>
+        <?php endif; ?>
+        <h3 class="m-3 text-center">Entrada de Estoque</h3>
 
-            <a class="btn btn-primary" href="index.php">Home</a>
+        <div class="gap-2 d-flex justify-content-center flex-wrap mb-3">
+
+            <a class="btn btn-primary" href="index.php?action=produto">Produto</a>
             <a class="btn btn-success" href="index.php?action=vendas">Venda</a>
             <a class="btn btn-warning" href="index.php?action=historico">Histórico</a>
             <a class="btn btn-dark" href="index.php?action=dashboard">Dashboard</a>
@@ -94,7 +104,9 @@ require_once __DIR__ . '/../middlewares/auth.php';
         </form>
     </div>
 
-    <script  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script>
         document.addEventListener("DOMContentLoaded", function() {
 
             const inputCodigo = document.querySelector('[name="codigo"]');
@@ -138,6 +150,10 @@ require_once __DIR__ . '/../middlewares/auth.php';
             });
 
         });
+        setTimeout(() => {
+            const alert = document.querySelector('.alert');
+            if (alert) alert.remove();
+        }, 3000);
     </script>
 </body>
 

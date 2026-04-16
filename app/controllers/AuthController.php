@@ -29,6 +29,7 @@ class AuthController
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['empresa_id'] = $usuario['empresa_id'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
+            $_SESSION['tipo'] = $usuario['tipo'];
 
             header("Location: index.php?action=home");
             exit;
