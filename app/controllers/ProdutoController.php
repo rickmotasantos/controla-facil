@@ -177,4 +177,23 @@ class ProdutoController
 
         require __DIR__ . '/../views/produtos.php';
     }
+    public function salvarEntradaRapida()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $pdo = conectarBanco();
+
+            $produto_id = $_POST['produto_id'];
+            $quantidade = $_POST['quantidade'];
+
+            $model = new Produto($pdo);
+            $model->somarEstoque($produto_id, $quantidade);
+
+            $_SESSION['msg'] = "Entrada de estoque realizada com sucesso!";
+            $_SESSION['msg_tipo'] = "success";
+
+            header("Location: index.php?action=vendas");
+            exit;
+        }
+    }
 }

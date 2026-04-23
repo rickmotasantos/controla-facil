@@ -23,10 +23,10 @@ class Produto
 
     public function buscarPorId($id, $empresa_id, $tipo)
     {
-        if($tipo === 'admin'){
+        if ($tipo === 'admin') {
             $stmt = $this->pdo->prepare("SELECT * FROM produtos WHERE id = ?");
             $stmt->execute([$id]);
-        }else{
+        } else {
             $stmt = $this->pdo->prepare("SELECT * FROM produtos WHERE id = ? AND empresa_id = ?");
             $stmt->execute([$id, $empresa_id]);
         }
@@ -37,7 +37,7 @@ class Produto
     {
         $sql = "UPDATE produtos SET nome=?, preco=?, quantidade=?, codigo=?, empresa_id=? WHERE id=? AND empresa_id= ?";
         $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$nome, $preco, $quantidade,$codigo, $empresa_id, $id, $empresa_id]);
+        return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id, $id, $empresa_id]);
     }
 
     public function excluir($id, $empresa_id)
@@ -46,26 +46,41 @@ class Produto
         return $stmt->execute([$id, $empresa_id]);
     }
 
-    public function adicionarEstoque($id, $quantidade, $empresa_id){
+    public function adicionarEstoque($id, $quantidade, $empresa_id)
+    {
         $sql = "UPDATE produtos SET quantidade = quantidade + ? WHERE id = ? AND empresa_id = ?";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$quantidade, $id, $empresa_id]);
     }
 
-    public function listarPorEmpresa($empresa_id){
+    public function listarPorEmpresa($empresa_id)
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM produtos WHERE empresa_id = ?");
         $stmt->execute([$empresa_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     }
 
-    public function listarComFiltro($empresa_id, $tipo){
-        if($tipo === 'admin'){
+    public function listarComFiltro($empresa_id, $tipo)
+    {
+        if ($tipo === 'admin') {
             return $this->pdo->query("SELECT * FROM produtos")->fetchAll(PDO::FETCH_ASSOC);
         }
 
         $stmt = $this->pdo->prepare("SELECT * FROM produtos WHERE empresa_id = ?");
         $stmt->execute([$empresa_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function somarEstoque($id, $quantidade)
+    {
+        $sql = "UPDATE produtos 
+            SET quantidade = quantidade + :quantidade
+            WHERE id = :id";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':quantidade', $quantidade);
+
+        return $stmt->execute();
     }
 }

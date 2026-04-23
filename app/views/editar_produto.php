@@ -19,18 +19,27 @@
         </nav>
 
         <hr>
-        
+
         <h2>Editar Produto</h2>
 
         <form method="post" action="index.php?action=atualizar" class="row g-3">
             <input class="form-control" type="hidden" name="id" value="<?= $dados['id'] ?>">
-            <input type="text" name="nome" value="<?= $dados['nome'] ?>">
-            <input type="number" step="0.01" name="preco" value="<?= $dados['preco'] ?>" required>
-            <input type="hidden" name="quantidade" value="<?= $dados['quantidade'] ?>" required>
-            <input type="number" name="codigo" value="<?= $dados['codigo'] ?>" required>
+            <label for="nome" class="form-label">nome:
+                <input type="text" class="form-control" name="nome" value="<?= $dados['nome'] ?>">
+            </label>
+            
+            <label for="preco" class="form-label">Preço:
+                <input type="number" class="form-control" step="0.01" name="preco" value="<?= $dados['preco']?>" required>
+            </label>
+                <input type="hidden" class="form-control" name="quantidade" value="<?= $dados['quantidade']?>" required>
+
+            <label for="codigo" class="form-label">Código:
+                <input type="number" class="form-control" name="codigo" value="<?= $dados['codigo'] ?>" required>
+            </label>
 
             <button class="btn btn-success" type="submit">Atualizar</button>
         </form>
     </div>
 </body>
+
 </html>

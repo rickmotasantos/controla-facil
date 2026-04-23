@@ -6,56 +6,129 @@ define('BASE_PATH', dirname(__DIR__));
 require_once BASE_PATH . '/app/controllers/ProdutoController.php';
 require_once BASE_PATH . '/app/controllers/VendaController.php';
 require_once BASE_PATH . '/app/controllers/AuthController.php';
-
+require_once BASE_PATH . '/app/controllers/AdminController.php';
 
 $action = $_GET['action'] ?? $_POST['action'] ?? 'home';
 
-
 $rotasPublicas = ['login', 'autenticar'];
 
-if (!in_array($action, $rotasPublicas) && !isset($_SESSION['usuario_id'])) {
-    header("Location: index.php?action=login");
-    exit;
+$rotasAdmin = [
+    'admin_dashboard',
+    'usuarios',
+    'empresas'
+];
+
+function isAdmin()
+{
+    return ($_SESSION['tipo'] ?? null) === 'admin';
 }
 
-if ($action == 'login') {
-    (new AuthController())->login();
-} elseif ($action == 'autenticar') {
-    (new AuthController())->autenticar();
-} elseif ($action == 'logout') {
-    (new AuthController())->logout();
-} elseif ($action == 'salvar') {
-    (new ProdutoController())->salvar();
-} elseif ($action == 'editar') {
-    (new ProdutoController())->editar();
-} elseif ($action == 'atualizar') {
-    (new ProdutoController())->atualizar();
-} elseif ($action == 'excluir') {
-    (new ProdutoController())->excluir();
-} elseif ($action == 'entrada') {
-    (new ProdutoController())->entrada();
-} elseif ($action == 'adicionar_estoque') {
-    (new ProdutoController())->adicionarEstoque();
-} elseif ($action == 'vendas') {
-    (new VendaController())->nova();
-} elseif ($action == 'addCarrinho') {
-    (new VendaController())->addCarrinho();
-} elseif ($action == 'removerCarrinho') {
-    (new VendaController())->removerCarrinho();
-} elseif ($action == 'finalizarCarrinho') {
-    (new VendaController())->finalizarCarrinho();
-} elseif ($action == 'historico') {
-    (new VendaController())->listar();
-} elseif ($action == 'dashboard') {
-    (new VendaController())->dashboard();
-} elseif ($action == 'buscarProduto') {
-    (new VendaController())->buscarProduto();
-}elseif ($action == 'home') {
-    require_once BASE_PATH . '/app/views/home.php';
-}elseif($action == 'alterar_senha') {
-    (new AuthController())->alterarSenha();
-}elseif($action == 'salvar_senha') {
-    (new AuthController())->salvarSenha();
-} else {
-    (new ProdutoController())->index();
+if (!in_array($action, $rotasPublicas)) {
+
+    if (!isset($_SESSION['usuario_id'])) {
+        header("Location: index.php?action=login");
+        exit;
+    }
+
+    if (in_array($action, $rotasAdmin) && !isAdmin()) {
+        $_SESSION['msg'] = "Você não tem permissão para acessar essa área";
+        $_SESSION['msg_tipo'] = "danger";
+
+        header("Location: index.php?action=home");
+        exit;
+    }
+}
+
+switch ($action) {
+
+    case 'admin_dashboard':
+        require_once BASE_PATH . '/app/controllers/AdminController.php';
+        (new AdminController())->dashboard();
+        break;
+
+    case 'login':
+        (new AuthController())->login();
+        break;
+
+    case 'autenticar':
+        (new AuthController())->autenticar();
+        break;
+
+    case 'logout':
+        (new AuthController())->logout();
+        break;
+
+    case 'salvar':
+        (new ProdutoController())->salvar();
+        break;
+
+    case 'editar':
+        (new ProdutoController())->editar();
+        break;
+
+    case 'atualizar':
+        (new ProdutoController())->atualizar();
+        break;
+
+    case 'excluir':
+        (new ProdutoController())->excluir();
+        break;
+
+    case 'entrada':
+        (new ProdutoController())->entrada();
+        break;
+
+    case 'adicionar_estoque':
+        (new ProdutoController())->adicionarEstoque();
+        break;
+
+    case 'vendas':
+        (new VendaController())->nova();
+        break;
+
+    case 'addCarrinho':
+        (new VendaController())->addCarrinho();
+        break;
+
+    case 'removerCarrinho':
+        (new VendaController())->removerCarrinho();
+        break;
+
+    case 'finalizarCarrinho':
+        (new VendaController())->finalizarCarrinho();
+        break;
+
+    case 'historico':
+        (new VendaController())->listar();
+        break;
+
+    case 'dashboard':
+        (new VendaController())->dashboard();
+        break;
+
+    case 'buscarProduto':
+        (new VendaController())->buscarProduto();
+        break;
+
+    case 'alterar_senha':
+        (new AuthController())->alterarSenha();
+        break;
+
+    case 'salvar_senha':
+        (new AuthController())->salvarSenha();
+        break;
+
+    case 'home':
+        require_once BASE_PATH . '/app/views/home.php';
+        break;
+
+    case 'salvarEntradaRapida':
+        require_once '../app/controllers/ProdutoController.php';
+        $controller = new ProdutoController();
+        $controller->salvarEntradaRapida();
+        break;
+
+    default:
+        (new ProdutoController())->index();
+        break;
 }

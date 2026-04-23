@@ -18,7 +18,7 @@
     <?php unset($_SESSION['msg'], $_SESSION['msg_tipo']);
     endif; ?>
     <div class="text-center">
-        <img src="/meusSistemas/sistema-comercio/public/assets/logoMn.png" alt="Logo" style="width:320px;" class="img-fluid">
+        <img src="assets/logoMn.png" alt="Logo" style="width:320px;" class="img-fluid">
     </div>
     <div class="card p-4 shadow" style="width: 300px;">
         <form method="POST" action="index.php?action=autenticar">

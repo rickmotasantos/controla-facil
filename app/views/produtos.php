@@ -58,6 +58,10 @@
             <a class="btn btn-warning" href="index.php?action=historico">Histórico</a>
             <a class="btn btn-dark" href="index.php?action=dashboard">Dashboard</a>
             <a class="btn btn-info" href="index.php?action=entrada">Estoque</a>
+            <?php if (($_SESSION['tipo'] ?? '') === 'admin'): ?>
+                <a class="btn btn-danger" href="index.php?action=admin_dashboard">Admin - Empresas</a>
+                <i class="bi bi-shield-lock"></i>
+            <?php endif; ?>
 
         </div>
 
@@ -114,10 +118,19 @@
                 <tbody>
                     <?php foreach ($produtos as $p): ?>
                         <tr>
+                            </td>
                             <td data-label="Código"><?= $p['codigo'] ?></td>
                             <td data-label="Nome"><?= $p['nome'] ?></td>
                             <td data-label="Preço">R$ <?= number_format($p['preco'], 2, ',', '.') ?></td>
-                            <td data-label="Qtd"><?= $p['quantidade'] ?></td>
+                            <td data-label="Qtd"><?php if ($p['quantidade'] == 0): ?>
+                                    <span class="badge bg-danger p-2">Sem est.</span>
+                                <?php elseif ($p['quantidade'] <= 5): ?>
+                                    <span class="badge bg-warning text-dark p-2">Est. baixo</span>
+                                <?php else: ?>
+                                    <span class="badge bg-success p-2">Disponível</span>
+                                <?php endif; ?> - 
+                                <span class="badge border border-black text-black"><?= $p['quantidade'] ?></span>
+                            </td>
                             <td data-label="Ações" class="d-flex flex-wrap gap-2 justify-content-center">
                                 <div class="acoes-btns">
                                     <a href="index.php?action=editar&id=<?= $p['id'] ?>" class="mb-1 btn btn-warning btn-sm">Editar</a>
