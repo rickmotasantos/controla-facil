@@ -11,57 +11,56 @@ require_once __DIR__ . '/../middlewares/auth.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="shortcut icon" href="assets/favicon.png" type="image/png">
     <title>Nova Venda</title>
+    <style>
+        body {
+            background-color: #f5f7fa;
+        }
+
+        .card-form {
+            border-radius: 15px;
+        }
+
+        .form-control {
+            height: 50px;
+            border-radius: 10px;
+        }
+
+        .btn-success {
+            height: 50px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .topbar {
+            background: #0d6efd;
+            padding: 10px;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
 
-    <div class="dropdown bg-primary p-2 text-end">
-        <button class="btn text-white d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    <div class="topbar d-flex justify-content-between align-items-center px-3 text-white">
+        <strong>💰 Vendas</strong>
+        <div class="dropdown">
+            <button class="btn text-white dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle" style="font-size: 20px;"></i>
+                <span><?= $_SESSION['usuario_nome'] ?? 'Usuário' ?></span>
+            </button>
 
-            <i class="bi bi-person-circle" style="font-size: 20px;"></i>
+            <ul class="dropdown-menu dropdown-menu-end">
 
-            <span><?= $_SESSION['usuario_nome'] ?? 'Usuário' ?></span>
+                <li>
+                    <a class="dropdown-item text-danger" href="index.php?action=home">
+                        <i class="bi bi-house"></i> Home
+                    </a>
+                </li>
 
-        </button>
-
-        <ul class="dropdown-menu dropdown-menu-end mt-2">
-
-            <li>
-                <a class="dropdown-item" href="index.php?action=perfil">
-                    <i class="bi bi-person"></i> Perfil
-                </a>
-            </li>
-
-            <li>
-                <a class="dropdown-item" href="index.php?action=alterar_senha">
-                    <i class="bi bi-key"></i> Alterar senha
-                </a>
-            </li>
-
-            <li>
-                <hr class="dropdown-divider">
-            </li>
-
-            <li>
-                <a class="dropdown-item text-danger" href="index.php?action=logout" onclick="return confirm('Tem certeza que deseja sair?')">
-                    <i class="bi bi-box-arrow-right"></i> Sair
-                </a>
-            </li>
-
-        </ul>
+            </ul>
+        </div>
     </div>
     <div class="container py-3">
         <h3 class="text-center m-3">Sistema Comércio</h3>
-
-        <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
-
-            <a class="btn btn-primary" href="index.php?action=produto">Produto</a>
-            <a class="btn btn-success" href="index.php?action=vendas">Venda</a>
-            <a class="btn btn-warning" href="index.php?action=historico">Histórico</a>
-            <a class="btn btn-dark" href="index.php?action=dashboard">Dashboard</a>
-            <a class="btn btn-info" href="index.php?action=entrada">Estoque</a>
-
-        </div>
 
         <hr>
 
@@ -94,128 +93,128 @@ require_once __DIR__ . '/../middlewares/auth.php';
                                 <div id="resultado_busca_entrada"
                                     class="list-group mt-2 shadow position-absolute w-100"
                                     style="z-index:999;">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 ">
+                                <label for="form-control">Quantidade</label>
+                                <input type="number" class="form-control" name="quantidade" min="1" required>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Salvar entrada</button>
                             </div>
                         </div>
-
-                        <div class="mb-3 ">
-                            <label for="form-control">Quantidade</label>
-                            <input type="number" class="form-control" name="quantidade" min="1" required>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Salvar entrada</button>
-                        </div>
+                    </form>
                 </div>
-                </form>
             </div>
         </div>
-    </div>
 
-    <?php if (!empty($_SESSION['msg'])): ?>
+        <?php if (!empty($_SESSION['msg'])): ?>
 
-        <div class="alert alert-<?= $_SESSION['msg_tipo'] ?? 'success' ?> mt-3">
-            <?= $_SESSION['msg']; ?>
-        </div>
+            <div class="alert alert-<?= $_SESSION['msg_tipo'] ?? 'success' ?> mt-3">
+                <?= $_SESSION['msg']; ?>
+            </div>
 
-        <?php unset($_SESSION['msg']);
-        unset($_SESSION['msg_tipo']);
-        ?>
-    <?php endif; ?>
+            <?php unset($_SESSION['msg']);
+            unset($_SESSION['msg_tipo']);
+            ?>
+        <?php endif; ?>
 
-    <form method="post" action="index.php?action=addCarrinho" class="row g-2 align-items-end">
+        <form method="post" action="index.php?action=addCarrinho" class="row g-2 align-items-end">
 
-        <input type="hidden" name="produto_id" id="produto_id">
+            <input type="hidden" name="produto_id" id="produto_id">
 
-        <div class="col-12 col-md-5 position-relative">
-            <input type="text" id="busca_produto" class="form-control" placeholder="Digite código ou nome">
+            <div class="col-12 col-md-5 position-relative">
+                <input type="text" id="busca_produto" class="form-control" placeholder="Digite código ou nome">
 
-            <div id="resultado_busca" class="list-group mt-2 shadow position-absolute w-100"></div>
-        </div>
+                <div id="resultado_busca" class="list-group mt-2 shadow position-absolute w-100"></div>
+            </div>
 
-        <div class="col-6 col-md-3">
-            <input type="number" name="quantidade" class="form-control" min="1" required>
-        </div>
+            <div class="col-6 col-md-3">
+                <input type="number" name="quantidade" class="form-control" min="1" required>
+            </div>
 
-        <div class="col-6 col-md-2">
-            <button class="btn btn-primary w-100">Adicionar</button>
-        </div>
+            <div class="col-6 col-md-2">
+                <button class="btn btn-primary w-100">Adicionar</button>
+            </div>
 
-    </form>
+        </form>
 
-    <hr>
+        <hr>
 
-    <h5>Carrinho</h5>
+        <h5>Carrinho</h5>
 
-    <ul class="list-group">
+        <ul class="list-group">
 
-        <?php
-        $total = 0;
+            <?php
+            $total = 0;
 
-        if (!empty($_SESSION['carrinho'])):
-            foreach ($_SESSION['carrinho'] as $index => $item):
-                $subtotal = $item['preco'] * $item['quantidade'];
-                $total += $subtotal;
-        ?>
+            if (!empty($_SESSION['carrinho'])):
+                foreach ($_SESSION['carrinho'] as $index => $item):
+                    $subtotal = $item['preco'] * $item['quantidade'];
+                    $total += $subtotal;
+            ?>
 
-                <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
+                    <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
 
-                    <div class="fw-semibold">
-                        <?= $item['nome'] ?> <br>
-                        <div class="text-muted">
-                            Qtd: <?= $item['quantidade'] ?> |
-                            R$ <?= number_format($subtotal, 2, ',', '.') ?>
+                        <div class="fw-semibold">
+                            <?= $item['nome'] ?> <br>
+                            <div class="text-muted">
+                                Qtd: <?= $item['quantidade'] ?> |
+                                R$ <?= number_format($subtotal, 2, ',', '.') ?>
+                            </div>
+
                         </div>
 
-                    </div>
+                        <a href="index.php?action=removerCarrinho&index=<?= $index ?>"
+                            class="btn btn-danger btn-sm">X</a>
+                    </li>
 
-                    <a href="index.php?action=removerCarrinho&index=<?= $index ?>"
-                        class="btn btn-danger btn-sm">X</a>
-                </li>
+            <?php endforeach;
+            endif; ?>
 
-        <?php endforeach;
-        endif; ?>
+        </ul>
 
-    </ul>
+        <form method="post" action="index.php?action=finalizarCarrinho" class="mt-3">
 
-    <form method="post" action="index.php?action=finalizarCarrinho" class="mt-3">
+            <div class="row g-2 align-items-end">
 
-        <div class="row g-2 align-items-end">
+                <div class="col-12 col-md-3">
 
-            <div class="col-12 col-md-3">
+                    <select name="forma_pagamento" class="form-control" required>
+                        <option value="">Selecione a forma de pagamento</option>
+                        <option value="dinheiro">Dinheiro</option>
+                        <option value="cartao">Cartão</option>
+                        <option value="pix">Pix</option>
+                    </select>
 
-                <select name="forma_pagamento" class="form-control" required>
-                    <option value="">Selecione a forma de pagamento</option>
-                    <option value="dinheiro">Dinheiro</option>
-                    <option value="cartao">Cartão</option>
-                    <option value="pix">Pix</option>
-                </select>
+                </div>
 
+                <div class="col-md-4" id="campo_dinheiro" style="display:none;">
+                    <input type="number" step="0.01" id="valor_recebido"
+                        name="valor_recebido" class="form-control"
+                        placeholder="Valor recebido">
+                </div>
+
+                <div class="col-md-4" id="campo_troco" style="display:none;">
+                    <h5>Troco:</h5>
+                    <h4 id="troco" class="text-success">R$ 0,00</h4>
+                </div>
+
+                <div class="col-md-4">
+                    <button class="btn btn-success w-100" <?= empty($_SESSION['carrinho']) ? 'disabled' : '' ?>>
+                        Finalizar Venda
+                    </button>
+                </div>
             </div>
 
-            <div class="col-md-4" id="campo_dinheiro" style="display:none;">
-                <input type="number" step="0.01" id="valor_recebido"
-                    name="valor_recebido" class="form-control"
-                    placeholder="Valor recebido">
-            </div>
-
-            <div class="col-md-4" id="campo_troco" style="display:none;">
-                <h5>Troco:</h5>
-                <h4 id="troco" class="text-success">R$ 0,00</h4>
-            </div>
-
-            <div class="col-md-4">
-                <button class="btn btn-success w-100" <?= empty($_SESSION['carrinho']) ? 'disabled' : '' ?>>
-                    Finalizar Venda
-                </button>
-            </div>
+        </form>
+        <div class="mt-3 p-3 bg-light rounded shadow-sm">
+            <h4 class="m-0 text-end">
+                Total: R$<?= number_format($total, 2, ',', '.') ?>
+            </h4>
         </div>
-
-    </form>
-    <div class="mt-3 p-3 bg-light rounded shadow-sm">
-        <h4 class="m-0 text-end">
-            Total: R$<?= number_format($total, 2, ',', '.') ?>
-        </h4>
-    </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">

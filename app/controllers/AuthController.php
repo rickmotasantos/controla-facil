@@ -15,8 +15,8 @@ class AuthController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        $pdo = conectarBanco();
 
+        $pdo = conectarBanco();
 
         $nome = $_POST['nome'];
         $senha = $_POST['senha'];
@@ -25,6 +25,30 @@ class AuthController
         $usuario = $usuarioModel->buscarPorNome($nome);
 
         if ($usuario && password_verify($senha, $usuario['senha'])) {
+
+            // bloqueio para clientes empresa
+            if ($usuario['tipo'] === 'empresa') {
+
+                $stmt = $pdo->prepare("
+                SELECT status 
+                FROM empresas 
+                WHERE id = ?
+            ");
+
+                $stmt->execute([$usuario['empresa_id']]);
+                $empresa = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (
+                    $empresa &&
+                    in_array($empresa['status'], ['suspenso', 'inadimplente'])
+                ) {
+                    $_SESSION['msg'] = "Seu acesso foi bloqueado. Entre em contato com o administrador.";
+                    $_SESSION['msg_tipo'] = "danger";
+
+                    header("Location: index.php?action=login");
+                    exit;
+                }
+            }
 
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['empresa_id'] = $usuario['empresa_id'];

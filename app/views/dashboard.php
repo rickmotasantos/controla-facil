@@ -11,57 +11,55 @@ require_once __DIR__ . '/../middlewares/auth.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="shortcut icon" href="assets/favicon.png" type="image/png">
     <title>Dashboard</title>
+    <style>
+        body {
+            background-color: #f5f7fa;
+        }
+
+        .card-form {
+            border-radius: 15px;
+        }
+
+        .form-control {
+            height: 50px;
+            border-radius: 10px;
+        }
+
+        .btn-success {
+            height: 50px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .topbar {
+            background: #0d6efd;
+            padding: 10px;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="dropdown bg-primary text-end p-2">
-        <button class="btn text-white d-flex align-items-center gap-2 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    <div class="topbar d-flex justify-content-between align-items-center px-3 text-white">
+        <strong>📊 Dashboard</strong>
+        <div class="dropdown">
+            <button class="btn text-white dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle" style="font-size: 20px;"></i>
+                <span><?= $_SESSION['usuario_nome'] ?? 'Usuário' ?></span>
+            </button>
 
-            <i class="bi bi-person-circle" style="font-size: 20px;"></i>
+            <ul class="dropdown-menu dropdown-menu-end">
 
-            <span><?= $_SESSION['usuario_nome'] ?? 'Usuário' ?></span>
+                <li>
+                    <a class="dropdown-item text-danger" href="index.php?action=home">
+                        <i class="bi bi-house"></i> Home
+                    </a>
+                </li>
 
-        </button>
-
-        <ul class="dropdown-menu dropdown-menu-end">
-
-            <li>
-                <a class="dropdown-item" href="index.php?action=perfil">
-                    <i class="bi bi-person"></i> Perfil
-                </a>
-            </li>
-
-            <li>
-                <a class="dropdown-item" href="index.php?action=alterar_senha">
-                    <i class="bi bi-key"></i> Alterar senha
-                </a>
-            </li>
-
-            <li>
-                <hr class="dropdown-divider">
-            </li>
-
-            <li>
-                <a class="dropdown-item text-danger" href="index.php?action=logout" onclick="return confirm('Tem certeza que deseja sair?')">
-                    <i class="bi bi-box-arrow-right"></i> Sair
-                </a>
-            </li>
-
-        </ul>
+            </ul>
+        </div>
     </div>
     <div class="container d-flex flex-column justify-content-center p-3">
         <h3 class="mb-3 text-center">Sistema Comércio</h3>
-
-        <div class="gap-2 d-flex justify-content-center flex-wrap mb-3">
-
-            <a class="btn btn-primary" href="index.php?action=produto">Produto</a>
-            <a class="btn btn-success" href="index.php?action=vendas">Venda</a>
-            <a class="btn btn-warning" href="index.php?action=historico">Histórico</a>
-            <a class="btn btn-dark" href="index.php?action=dashboard">Dashboard</a>
-            <a class="btn btn-info" href="index.php?action=entrada">Estoque</a>
-
-        </div>
-
         <hr>
 
         <div class="row d-flex justify-content-center">

@@ -196,4 +196,9 @@ class ProdutoController
             exit;
         }
     }
+
+    public function cadastrar()
+    {
+        require __DIR__ . '/../views/cadastrar_produto.php';
+    }
 }

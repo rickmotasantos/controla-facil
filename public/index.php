@@ -123,11 +123,33 @@ switch ($action) {
         break;
 
     case 'salvarEntradaRapida':
-        require_once '../app/controllers/ProdutoController.php';
-        $controller = new ProdutoController();
-        $controller->salvarEntradaRapida();
+        (new ProdutoController())->salvarEntradaRapida();
+        break;
+    
+    case 'salvarEmpresa':
+        (new AdminController())->salvarEmpresa();
         break;
 
+    case 'excluirEmpresa':
+        (new AdminController())->excluirEmpresa();
+        break;
+
+    case 'editarEmpresa':
+        (new AdminController())->editarEmpresa();
+        break;
+    
+    case 'atualizarEmpresa':
+        (new AdminController())->atualizarEmpresa();
+        break;
+
+    case 'alterarStatusEmpresa':
+        (new AdminController())->alterarStatusEmpresa();
+        break;
+
+    case 'cadastrar_produto':
+        require_once BASE_PATH . '/app/views/cadastrar_produtos.php';
+        break;
+        
     default:
         (new ProdutoController())->index();
         break;
