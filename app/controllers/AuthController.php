@@ -42,7 +42,7 @@ class AuthController
                     $empresa &&
                     in_array($empresa['status'], ['suspenso', 'inadimplente'])
                 ) {
-                    $_SESSION['msg'] = "Seu acesso foi bloqueado. Entre em contato com o administrador.";
+                    $_SESSION['msg'] = "Seu acesso foi bloqueado. Entre em contato com o administrador. (21) 98828-1330";
                     $_SESSION['msg_tipo'] = "danger";
 
                     header("Location: index.php?action=login");
