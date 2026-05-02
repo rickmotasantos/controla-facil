@@ -10,21 +10,43 @@ class VendaController
     {
         $pdo = conectarBanco();
 
-        $produto_id = $_POST['produto_id'];
-        $quantidade = $_POST['quantidade'];
+        $produto_id = $_POST['produto_id'] ?? null;
+        $quantidade = (int)$_POST['quantidade'];
         $empresa_id = $_SESSION['empresa_id'];
-        $forma_pagamento = $_POST['forma_pagamento'];
+        $forma_pagamento = $_POST['forma_pagamento'] ?? '';
 
         $stmt = $pdo->prepare("SELECT * FROM produtos WHERE id = ? AND empresa_id = ?");
         $stmt->execute([$produto_id, $empresa_id]);
         $produto = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        if (!$produto_id) {
+            $_SESSION['msg'] = "Produto inválido!";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=vendas");
+            exit;
+        }
+
+        if ($quantidade <= 0) {
+            $_SESSION['msg'] = "Quantidade inválida!";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=vendas");
+            exit;
+        }
+
         if (!$produto) {
-            die("Produto não encontrado");
+            $_SESSION['msg'] = "Produto não encontrado";
+            $_SESSION['msg_tipo'] = "danger";
+            header("Location: index.php?action=vendas");
+            exit;
         }
 
         if ($produto['quantidade'] < $quantidade) {
-            die("estoque insuficiente");
+            $_SESSION['msg'] = "Estoque insuficiente";
+            $_SESSION['msg_tipo'] = "danger";
+            header("Location: index.php?action=vendas");
+            exit;
         }
 
         $preco = $produto['preco'];
@@ -84,8 +106,17 @@ class VendaController
         $pdo = conectarBanco();
 
         $produto_id = $_POST['produto_id'];
-        $quantidade = $_POST['quantidade'];
+        $quantidade = (int) $_POST['quantidade'];
         $empresa_id = $_SESSION['empresa_id'];
+        $forma_pagamento = $_POST['forma_pagamento'] ?? '';
+
+        if ($quantidade <= 0) {
+            $_SESSION['msg'] = "Quantidade inválida!";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=vendas");
+            exit;
+        }
 
         if (empty($produto_id)) {
             $_SESSION['msg'] = "Produto não encontrado";
@@ -129,6 +160,10 @@ class VendaController
             }
         }
 
+        if (!isset($_SESSION['carrinho'])) {
+            $_SESSION['carrinho'] = [];
+        }
+
         $_SESSION['carrinho'][] = $item;
 
         header("Location: index.php?action=vendas");
@@ -138,7 +173,12 @@ class VendaController
     public function removerCarrinho()
     {
 
-        $index = $_GET['index'];
+        $index = $_GET['index'] ?? null;
+
+        if (!isset($_SESSION['carrinho'][$index])) {
+            header("Location: index.php?action=vendas");
+            exit;
+        }
 
         unset($_SESSION['carrinho'][$index]);
 
@@ -152,96 +192,92 @@ class VendaController
     {
         $pdo = conectarBanco();
 
-        $empresa_id = $_SESSION['empresa_id'];
-        $carrinho = $_SESSION['carrinho'] ?? [];
+        try {
+            $pdo->beginTransaction();
 
-        if (empty($carrinho)) {
-            $_SESSION['msg'] = "Carrinho vazio!";
+            $empresa_id = $_SESSION['empresa_id'];
+            $carrinho = $_SESSION['carrinho'] ?? [];
+
+            if (empty($carrinho)) {
+                $_SESSION['msg'] = "Carrinho vazio!";
+                $_SESSION['msg_tipo'] = "danger";
+                header("Location: index.php?action=vendas");
+                exit;
+            }
+
+            $forma_pagamento = $_POST['forma_pagamento'] ?? '';
+            $total = 0;
+
+            foreach ($carrinho as $item) {
+
+                $stmt = $pdo->prepare("SELECT quantidade FROM produtos WHERE id = ? AND empresa_id = ?");
+                $stmt->execute([$item['id'], $empresa_id]);
+                $produto = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$produto || $produto['quantidade'] < $item['quantidade']) {
+                    throw new Exception("Estoque insuficiente");
+                }
+
+                $total += $item['preco'] * $item['quantidade'];
+            }
+
+            $stmt = $pdo->prepare("INSERT INTO vendas (total, forma_pagamento, empresa_id) VALUES (?, ?, ?)");
+            $stmt->execute([$total, $forma_pagamento, $empresa_id]);
+
+            $venda_id = $pdo->lastInsertId();
+
+            foreach ($carrinho as $item) {
+
+                $stmt = $pdo->prepare("
+                INSERT INTO itens_venda (venda_id, produto_id, quantidade, preco, empresa_id)
+                VALUES (?, ?, ?, ?, ?)
+            ");
+                $stmt->execute([
+                    $venda_id,
+                    $item['id'],
+                    $item['quantidade'],
+                    $item['preco'],
+                    $empresa_id
+                ]);
+
+                $stmt = $pdo->prepare("
+                UPDATE produtos 
+                SET quantidade = quantidade - ? 
+                WHERE id = ? AND empresa_id = ?
+            ");
+                $stmt->execute([
+                    $item['quantidade'],
+                    $item['id'],
+                    $empresa_id
+                ]);
+            }
+
+            $pdo->commit();
+
+            unset($_SESSION['carrinho']);
+
+            $_SESSION['msg'] = "Venda realizada com sucesso!";
+            $_SESSION['msg_tipo'] = "success";
+
+            header("Location: index.php?action=vendas");
+            exit;
+        } catch (Exception $e) {
+
+            $pdo->rollBack();
+
+            $_SESSION['msg'] = "Erro ao finalizar venda!";
             $_SESSION['msg_tipo'] = "danger";
+
             header("Location: index.php?action=vendas");
             exit;
         }
-
-        $forma_pagamento = $_POST['forma_pagamento'];
-
-        $total = 0;
-
-        foreach ($carrinho as $item) {
-
-            $stmt = $pdo->prepare("
-            SELECT quantidade 
-            FROM produtos 
-            WHERE id = ? AND empresa_id = ?
-        ");
-            $stmt->execute([$item['id'], $empresa_id]);
-
-            $produto = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if (!$produto) {
-                $_SESSION['msg'] = "Produto inválido: {$item['nome']}";
-                $_SESSION['msg_tipo'] = "danger";
-                header("Location: index.php?action=vendas");
-                exit;
-            }
-
-            if ($produto['quantidade'] < $item['quantidade']) {
-                $_SESSION['msg'] = "Estoque insuficiente para {$item['nome']}";
-                $_SESSION['msg_tipo'] = "danger";
-                header("Location: index.php?action=vendas");
-                exit;
-            }
-
-            $total += $item['preco'] * $item['quantidade'];
-        }
-
-        $stmt = $pdo->prepare("
-        INSERT INTO vendas (total, forma_pagamento, empresa_id)
-        VALUES (?, ?, ?)
-    ");
-        $stmt->execute([$total, $forma_pagamento, $empresa_id]);
-
-        $venda_id = $pdo->lastInsertId();
-
-        foreach ($carrinho as $item) {
-
-            $stmt = $pdo->prepare("
-            INSERT INTO itens_venda (venda_id, produto_id, quantidade, preco, empresa_id)
-            VALUES (?, ?, ?, ?, ?)
-        ");
-            $stmt->execute([
-                $venda_id,
-                $item['id'],
-                $item['quantidade'],
-                $item['preco'],
-                $empresa_id
-            ]);
-
-            $stmt = $pdo->prepare("
-            UPDATE produtos 
-            SET quantidade = quantidade - ? 
-            WHERE id = ? AND empresa_id = ?
-        ");
-            $stmt->execute([
-                $item['quantidade'],
-                $item['id'],
-                $empresa_id
-            ]);
-        }
-
-        unset($_SESSION['carrinho']);
-
-        $_SESSION['msg'] = "Venda realizada com sucesso!";
-        $_SESSION['msg_tipo'] = "success";
-
-        header("Location: index.php?action=vendas");
-        exit;
     }
 
     public function buscarProduto()
     {
         $pdo = conectarBanco();
 
-        $busca = $_GET['busca'];
+        $busca = $_GET['busca'] ?? '';
         $empresa_id = $_SESSION['empresa_id'];
 
         $stmt = $pdo->prepare("

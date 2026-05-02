@@ -9,7 +9,7 @@ class ProdutoController
     {
         $pdo = conectarBanco();
 
-        $nome = $_POST['nome'];
+        $nome = $_POST['nome'] ?? '';
         $preco = $_POST['preco'];
         $quantidade = $_POST['quantidade'];
         $codigo = $_POST['codigo'];
@@ -56,7 +56,7 @@ class ProdutoController
         $pdo = conectarBanco();
 
         $id = $_POST['id'];
-        $nome = $_POST['nome'];
+        $nome = $_POST['nome'] ?? '';
         $preco = $_POST['preco'];
         $quantidade = $_POST['quantidade'];
         $codigo = $_POST['codigo'];

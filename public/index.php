@@ -150,6 +150,10 @@ switch ($action) {
         require_once BASE_PATH . '/app/views/cadastrar_produtos.php';
         break;
         
+    case 'produtos':
+        require_once BASE_PATH . '/app/views/produtos.php';
+        break;
+        
     default:
         (new ProdutoController())->index();
         break;

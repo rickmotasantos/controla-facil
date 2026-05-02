@@ -33,17 +33,28 @@ class Produto
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function atualizar($id, $nome, $preco, $quantidade, $codigo, $empresa_id)
+    public function atualizar($id, $nome, $preco, $quantidade, $codigo, $empresa_id, $tipo)
     {
-        $sql = "UPDATE produtos SET nome=?, preco=?, quantidade=?, codigo=?, empresa_id=? WHERE id=? AND empresa_id= ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id, $id, $empresa_id]);
+        if ($tipo === 'admin') {
+            $sql = "UPDATE produtos SET nome=?, preco=?, quantidade=?, codigo=?, empresa_id=? WHERE id=?";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id, $id]);
+        } else {
+            $sql = "UPDATE produtos SET nome=?, preco=?, quantidade=?, codigo=?, empresa_id=? WHERE id=? AND empresa_id= ?";
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id, $id, $empresa_id]);
+        }
     }
 
-    public function excluir($id, $empresa_id)
+    public function excluir($id, $empresa_id, $tipo)
     {
-        $stmt = $this->pdo->prepare("DELETE FROM produtos WHERE id = ? AND empresa_id = ?");
-        return $stmt->execute([$id, $empresa_id]);
+        if ($tipo === 'admin') {
+            $stmt = $this->pdo->prepare("DELETE FROM produtos WHERE id = ?");
+            return $stmt->execute([$id]);
+        } else {
+            $stmt = $this->pdo->prepare("DELETE FROM produtos WHERE id = ? AND empresa_id = ?");
+            return $stmt->execute([$id, $empresa_id]);
+        }
     }
 
     public function adicionarEstoque($id, $quantidade, $empresa_id)
