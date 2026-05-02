@@ -1,37 +1,57 @@
-# 🏪 Sistema de Comércio Local
+# 🏪 Sistema de Comércio (SaaS Local)
 
 ## 🎯 Sobre o Projeto
 
-Este projeto consiste no desenvolvimento de um sistema web simples para pequenos comércios, com o objetivo de facilitar o controle de vendas, estoque e clientes.
+Sistema web desenvolvido para pequenos comércios, com foco em controle de vendas, estoque e gestão por empresa.
 
-O sistema foi pensado para atender negócios como:
+Ideal para:
 
 * Padarias
-* Sacolões
-* Petshops
+* Mercados
 * Lojas de bairro
+* Petshops
 * Materiais de construção
 
 ---
 
 ## 🚀 Objetivo
 
-Ajudar pequenos comerciantes a:
+Ajudar comerciantes a:
 
-* Organizar vendas
-* Controlar estoque
-* Gerenciar clientes
-* Evitar prejuízos
-* Acompanhar lucros
+* Controlar vendas em tempo real
+* Gerenciar estoque automaticamente
+* Evitar perdas e erros manuais
+* Acompanhar desempenho do negócio
 
 ---
 
 ## 🧱 Tecnologias Utilizadas
 
-* PHP (Backend)
-* MySQL (Banco de dados)
-* HTML, CSS e Bootstrap (Frontend)
-* Git e GitHub (Versionamento)
+* PHP (PDO)
+* MySQL
+* HTML, CSS, Bootstrap
+* JavaScript
+* Git e GitHub
+
+---
+
+## 🔐 Autenticação e Controle de Acesso
+
+* Sistema de login com senha criptografada (`password_hash`)
+* Controle de acesso por tipo:
+
+  * Admin
+  * Empresa
+* Bloqueio de empresas (suspenso/inadimplente)
+* Sessões protegidas
+
+---
+
+## 🏢 Multiempresa (SaaS Ready)
+
+* Cada empresa possui seus próprios dados
+* Isolamento por `empresa_id`
+* Admin pode gerenciar todas as empresas
 
 ---
 
@@ -39,9 +59,10 @@ Ajudar pequenos comerciantes a:
 
 ### 💰 Vendas (PDV)
 
+* Carrinho de compras
 * Registro de vendas
-* Cálculo automático de valores
-* Formas de pagamento (dinheiro, cartão, fiado)
+* Baixa automática no estoque
+* Controle de formas de pagamento
 
 ---
 
@@ -49,177 +70,161 @@ Ajudar pequenos comerciantes a:
 
 * Cadastro de produtos
 * Controle de quantidade
-* Baixa automática após venda
-* Alerta de estoque baixo
+* Entrada e saída manual
+* Indicador visual:
+
+  * 🔴 Sem estoque
+  * 🟡 Estoque baixo
+  * 🟢 Estoque normal
 
 ---
 
-### 👤 Clientes
+### 🛒 Carrinho
 
-* Cadastro de clientes
-* Histórico de compras
-
----
-
-### 📒 Controle de Fiado
-
-* Registro de vendas pendentes
-* Controle de pagamentos
-* Lista de clientes devedores
+* Adição de produtos
+* Atualização de quantidade
+* Remoção de itens
+* Finalização com transação segura (PDO Transaction)
 
 ---
 
-### 📊 Relatórios
+### 📊 Dashboard
 
-* Total de vendas por dia/mês
-* Produtos mais vendidos
-* Controle de caixa
+* Total de vendas do dia
+* Total de vendas do mês
+* Produto mais vendido
+
+---
+
+### 📒 Histórico de Vendas
+
+* Listagem de vendas por empresa
+* Detalhes das transações
 
 ---
 
 ## 🗄️ Banco de Dados
 
-### Tabela: produtos
+### produtos
 
 * id
 * nome
 * preco
 * quantidade
-* created_at
+* codigo
+* empresa_id
 
-### Tabela: clientes
+### usuarios
 
 * id
 * nome
-* telefone
+* senha
+* tipo
+* empresa_id
 
-### Tabela: vendas
+### empresas
+
+* id
+* nome
+* status
+
+### vendas
 
 * id
 * total
 * forma_pagamento
-* data
+* empresa_id
+* created_at
 
-### Tabela: itens_venda
+### itens_venda
 
 * id
 * venda_id
 * produto_id
 * quantidade
 * preco
-
-### Tabela: fiado
-
-* id
-* cliente_id
-* valor
-* pago
-* data
+* empresa_id
 
 ---
 
 ## 🗂️ Estrutura do Projeto
 
 /app
-  /controllers
-  /models
-  /views
+ /controllers
+ /models
+ /views
 
 /config
-/routes
 /public
-/database
-/docs
 
 ---
 
 ## 🔐 Segurança
 
-* Uso de `PDO` para conexão com banco
+* PDO com prepared statements
 * Proteção contra SQL Injection
-* Estrutura preparada para autenticação futura
+* Controle de sessão
+* Validação de acesso por usuário
+* Transações no fechamento de vendas (integridade de dados)
 
 ---
 
-## 📅 Roadmap de Desenvolvimento
+## 🚀 Como Executar
 
-### Fase 1
-
-* Cadastro de produtos
-* Listagem de produtos
-
-### Fase 2
-
-* Tela de vendas (PDV)
-* Registro de vendas
-
-### Fase 3
-
-* Controle automático de estoque
-
-### Fase 4
-
-* Cadastro de clientes
-* Sistema de fiado
-
-### Fase 5
-
-* Relatórios e melhorias
-
----
-
-## 🚀 Como Executar o Projeto
-
-1. Clone o repositório:
+1. Clone o projeto:
 
 ```bash
 git clone https://github.com/seu-usuario/sistema-comercio.git
 ```
 
-2. Configure o ambiente:
-
-* Instale XAMPP ou similar
-* Inicie Apache e MySQL
+2. Configure o ambiente (XAMPP ou Laragon)
 
 3. Configure o banco:
 
-* Crie o banco `sistema_comercio`
-* Importe o arquivo `/database/schema.sql`
+* Crie o banco
+* Importe `/database/schema.sql`
 
-4. Configure a conexão:
+4. Configure o `.env`:
 
-* Edite `/config/database.php`
+```env
+DB_HOST=127.0.0.1
+DB_NAME=seu_banco
+DB_USER=root
+DB_PASS=
+```
 
-5. Acesse no navegador:
+5. Acesse:
 
-```bash
+```
 http://localhost/sistema-comercio/public
 ```
 
 ---
 
-## 💡 Melhorias Futuras
+## 📌 Status
 
-* Sistema de login (usuários)
-* Dashboard com gráficos
-* Backup automático
-* Sistema online (SaaS)
-* Integração com WhatsApp
+✅ Pronto para uso local
+🚀 Preparado para evolução SaaS
 
 ---
 
-## 📌 Status do Projeto
+## 💡 Próximas Melhorias
 
-🚧 Em desenvolvimento
+* Cadastro de clientes
+* Controle de fiado
+* Relatórios avançados
+* API REST
+* Integração com WhatsApp
+* Deploy online (multiempresa real)
 
 ---
 
 ## 👨‍💻 Autor
 
-Desenvolvido por [SEU NOME]
+Desenvolvido por **Ricardo Mota**
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT.
+MIT
