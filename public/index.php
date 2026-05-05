@@ -10,7 +10,7 @@ require_once BASE_PATH . '/app/controllers/AdminController.php';
 
 $action = $_GET['action'] ?? $_POST['action'] ?? 'home';
 
-$rotasPublicas = ['login', 'autenticar'];
+$rotasPublicas = ['login', 'autenticar', 'recuperar_simples', 'reset_simples'];
 
 $rotasAdmin = [
     'admin_dashboard',
@@ -125,7 +125,7 @@ switch ($action) {
     case 'salvarEntradaRapida':
         (new ProdutoController())->salvarEntradaRapida();
         break;
-    
+
     case 'salvarEmpresa':
         (new AdminController())->salvarEmpresa();
         break;
@@ -137,7 +137,7 @@ switch ($action) {
     case 'editarEmpresa':
         (new AdminController())->editarEmpresa();
         break;
-    
+
     case 'atualizarEmpresa':
         (new AdminController())->atualizarEmpresa();
         break;
@@ -149,11 +149,18 @@ switch ($action) {
     case 'cadastrar_produto':
         require_once BASE_PATH . '/app/views/cadastrar_produtos.php';
         break;
-        
+
     case 'produtos':
         require_once BASE_PATH . '/app/views/produtos.php';
         break;
-        
+
+    case 'recuperar_simples':
+        require_once BASE_PATH . '/app/views/recuperar_simples.php';
+        break;
+
+    case 'reset_simples':
+        (new AuthController())->resetSimples();
+        break;
     default:
         (new ProdutoController())->index();
         break;

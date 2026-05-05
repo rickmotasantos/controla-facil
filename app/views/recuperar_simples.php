@@ -1,5 +1,3 @@
-<?php require_once __DIR__ . '/../middlewares/auth.php'; ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -17,7 +15,7 @@
 
         <div class="card p-4 shadow w-100" style="width: 350px;">
 
-            <h3 class="text-center mb-3">Alterar Senha</h3>
+            <h3 class="text-center mb-3">Recuperar Senha</h3>
 
             <?php if (isset($_SESSION['msg'])): ?>
                 <div class="alert alert-<?= $_SESSION['msg_tipo'] ?>">
@@ -26,15 +24,16 @@
                 <?php unset($_SESSION['msg'], $_SESSION['msg_tipo']); ?>
             <?php endif; ?>
 
-            <form method="POST" action="index.php?action=salvar_senha">
+            <form method="POST" action="index.php?action=reset_simples">
+                <input type="text" name="empresa_nome" class="form-control" placeholder="Nome da empresa" required>
 
-                <input type="password" name="senha_atual" class="form-control mb-2" placeholder="Senha atual" required>
+                <input type="text" name="login" class="form-control mb-2" placeholder="Usuário ou Email" required>
 
                 <input type="password" name="nova_senha" class="form-control mb-2" placeholder="Nova senha" required>
 
-                <input type="password" name="confirmar_senha" class="form-control mb-3" placeholder="Confirmar senha" required>
+                <input type="password" name="confirmar" class="form-control mb-3" placeholder="Confirmar senha" required>
 
-                <button class="btn btn-primary w-100">Salvar</button>
+                <button class="btn btn-primary w-100">Redefinir senha</button>
 
             </form>
 

@@ -118,4 +118,54 @@ class AuthController
         header("Location: index.php?action=alterar_senha");
         exit;
     }
+
+    public function resetSimples()
+    {
+        $pdo = conectarBanco();
+
+        $login = $_POST['login'];
+        $nova = $_POST['nova_senha'];
+        $confirmar = $_POST['confirmar'];
+
+        if ($nova !== $confirmar) {
+            $_SESSION['msg'] = "Senhas não coincidem";
+            $_SESSION['msg_tipo'] = "danger";
+            header("Location: index.php?action=esqueci_senha");
+            exit;
+        }
+
+        $empresa_nome = $_POST['empresa_nome'];
+
+        $stmt = $pdo->prepare("
+    SELECT u.* 
+    FROM usuarios u
+    JOIN empresas e ON u.empresa_id = e.id
+    WHERE u.nome LIKE ? 
+    AND e.nome LIKE ?
+");
+
+        $stmt->execute([
+            "%$login%",
+            "%$empresa_nome%"
+        ]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$usuario) {
+            $_SESSION['msg'] = "Usuário não encontrado";
+            $_SESSION['msg_tipo'] = "danger";
+            header("Location: index.php?action=esqueci_senha");
+            exit;
+        }
+
+        $novaHash = password_hash($nova, PASSWORD_DEFAULT);
+
+        $stmt = $pdo->prepare("UPDATE usuarios SET senha = ? WHERE id = ?");
+        $stmt->execute([$novaHash, $usuario['id']]);
+
+        $_SESSION['msg'] = "Senha redefinida com sucesso!";
+        $_SESSION['msg_tipo'] = "success";
+
+        header("Location: index.php?action=login");
+        exit;
+    }
 }

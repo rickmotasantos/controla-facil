@@ -10,26 +10,60 @@
 - [x] Controle de estoque
 - [x] Carrinho de vendas
 - [x] Baixa automática de estoque
-- [x] Histórico de vendas
+- [x] Histórico de vendas (básico)
 - [x] Dashboard básico
 
 ---
 
-## 🔜 FASE 2 — ESSENCIAL (Curto prazo)
+## 🔥 FASE 2 — ESSENCIAL (FECHAR CLIENTES)
 
-### 🔐 Segurança
-- [ ] Recuperação de senha
-- [ ] Login por email
-- [ ] Melhorar validações
+### 📊 Histórico de vendas (PROFISSIONAL)
+- [ ] Mostrar itens da venda (itens_venda)
+- [ ] Criar tela de detalhes da venda
+- [ ] Adicionar botão "Ver detalhes" no histórico
 
-### 📊 Sistema
-- [ ] Paginação de produtos
-- [ ] Melhorar performance (índices)
-- [ ] Logs de erro
+### 📅 Período e filtros
+- [ ] Filtro por data (data início / data fim)
+- [ ] Botões rápidos (Hoje, 7 dias, Mês)
+
+### 📈 Dashboard mais completo
+- [ ] Total últimos 7 dias
+- [ ] Quantidade de vendas no dia
+- [ ] Média de vendas diária (opcional)
 
 ---
 
-## 💰 FASE 3 — SAAS (Começar a vender)
+## ⚙️ FASE 3 — USABILIDADE E ESTABILIDADE
+
+### 🔐 Sistema
+- [ ] Melhorar validações
+- [ ] Logs de erro
+
+### 📊 Performance
+- [ ] Paginação de produtos
+- [ ] Índices no banco (performance)
+
+---
+
+## 💰 FASE 4 — VALOR DE NEGÓCIO (DIFERENCIAL)
+
+- [ ] Produtos mais vendidos
+- [ ] Ranking de vendas
+- [ ] Histórico por produto
+- [ ] Relatórios por período
+
+---
+
+## 🧾 FASE 5 — FUNCIONALIDADES COMERCIAIS
+
+- [ ] Cadastro de clientes
+- [ ] Controle de fiado
+- [ ] Forma de pagamento detalhada
+- [ ] Observações na venda
+
+---
+
+## 🏢 FASE 6 — SAAS (ESCALAR O NEGÓCIO)
 
 ### 🏢 Empresas
 - [ ] Plano por empresa
@@ -43,16 +77,15 @@
 
 ---
 
-## 🚀 FASE 4 — DIFERENCIAL
+## 🚀 FASE 7 — DIFERENCIAL
 
 - [ ] Dashboard com gráficos
-- [ ] Relatórios avançados
-- [ ] Backup automático
 - [ ] Exportação (PDF / Excel)
+- [ ] Backup automático
 
 ---
 
-## 🌎 FASE 5 — ESCALA
+## 🌎 FASE 8 — ESCALA
 
 - [ ] API REST
 - [ ] App mobile (futuro)
@@ -63,6 +96,7 @@
 
 ## 🧠 IDEIAS FUTURAS
 
-- [ ] Sistema de clientes
-- [ ] Controle de fiado
+- [ ] Produtos por peso (kg, g, etc.)
+- [ ] Agenda (serviços)
 - [ ] Notificações automáticas
+- [ ] Integração com balança
