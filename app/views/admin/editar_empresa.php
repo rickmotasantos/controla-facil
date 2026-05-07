@@ -21,30 +21,36 @@
             <input name="nome"
                 class="form-control mb-2"
                 value="<?= $empresa['nome'] ?>"
+                placeholder="Nome da empresa"
                 required>
 
             <input name="responsavel"
                 class="form-control mb-2"
-                value="<?= $empresa['responsavel'] ?>">
+                value="<?= $empresa['responsavel'] ?>"
+                placeholder="Responsável">
 
             <input name="telefone"
                 class="form-control mb-2"
-                value="<?= $empresa['telefone'] ?>">
+                value="<?= $empresa['telefone'] ?>"
+                placeholder="Telefone">
 
             <input name="plano"
                 class="form-control mb-2"
-                value="<?= $empresa['plano'] ?>">
+                value="<?= $empresa['plano'] ?>"
+                placeholder="Plano">
 
             <input name="valor_mensal"
                 type="number"
                 step="0.01"
                 class="form-control mb-2"
+                placeholder="Valor mensalidade"
                 value="<?= $empresa['valor_mensal'] ?>">
 
             <input name="vencimento_dia"
                 type="number"
                 class="form-control mb-2"
-                value="<?= $empresa['vencimento_dia'] ?>">
+                value="<?= $empresa['vencimento_dia'] ?>"
+                placeholder="Dia do vencimento">
 
             <select name="status" class="form-control mb-3">
 

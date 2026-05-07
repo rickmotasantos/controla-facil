@@ -99,8 +99,10 @@
                   <tr>
                     <th>Empresa</th>
                     <th>Responsável</th>
+                    <th>Telefone</th>
                     <th>Plano</th>
                     <th>Valor</th>
+                    <th>Vencimento</th>
                     <th>Status</th>
                     <th>Ações</th>
                   </tr>
@@ -110,12 +112,14 @@
                     <tr>
                       <td><?= $empresa['nome'] ?></td>
                       <td><?= $empresa['responsavel'] ?></td>
+                      <td><?= $empresa['telefone'] ?></td>
                       <td><?= $empresa['plano'] ?></td>
                       <td>
                         <?= $empresa['valor_mensal']
                           ? 'R$ ' . number_format($empresa['valor_mensal'], 2, ',', '.')
                           : '-' ?>
                       </td>
+                      <td><?= $empresa['vencimento_dia'] ?></td>
                       <td><?= ucfirst($empresa['status']) ?></td>
                       <td>
                         <a href="index.php?action=editarEmpresa&id=<?= $empresa['id'] ?>" class="btn btn-warning btn-sm">Editar</a>

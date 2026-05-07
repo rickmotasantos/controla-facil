@@ -18,9 +18,11 @@
 ## 🔥 FASE 2 — ESSENCIAL (FECHAR CLIENTES)
 
 ### 📊 Histórico de vendas (PROFISSIONAL)
-- [ ] Mostrar itens da venda (itens_venda)
-- [ ] Criar tela de detalhes da venda
-- [ ] Adicionar botão "Ver detalhes" no histórico
+- [x] Tela de alterar senha
+- [x] Mostrar itens da venda (itens_venda)
+- [x] Criar tela de detalhes da venda
+- [x] Adicionar botão "Ver detalhes" no histórico
+- [] erro no histórico de venda
 
 ### 📅 Período e filtros
 - [ ] Filtro por data (data início / data fim)

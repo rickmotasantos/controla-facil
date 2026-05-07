@@ -42,11 +42,11 @@ class ProdutoController
         $pdo = conectarBanco();
 
         $id = $_GET['id'];
-        $empresa_id = $_SESSION['empresa_id'];
-        $tipo = $_SESSION['tipo'];
 
-        $produto = new Produto($pdo);
-        $dados = $produto->buscarPorId($id, $empresa_id, $tipo);
+        $stmt = $pdo->prepare("SELECT * FROM produtos WHERE id = ?");
+        $stmt->execute([$id]);
+
+        $dados = $stmt->fetch(PDO::FETCH_ASSOC);
 
         require __DIR__ . '/../views/editar_produto.php';
     }

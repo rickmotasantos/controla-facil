@@ -29,9 +29,9 @@
             </label>
             
             <label for="preco" class="form-label">Preço:
-                <input type="number" class="form-control" step="0.01" name="preco" value="<?= $dados['preco']?>" required>
+                <input type="number" class="form-control" step="0.01" name="preco" value="<?= $dados['preco'] ?>" required>
             </label>
-                <input type="hidden" class="form-control" name="quantidade" value="<?= $dados['quantidade']?>" required>
+                <input type="hidden" class="form-control" name="quantidade" value="<?= $dados['quantidade'] ?>" required>
 
             <label for="codigo" class="form-label">Código:
                 <input type="number" class="form-control" name="codigo" value="<?= $dados['codigo'] ?>" required>

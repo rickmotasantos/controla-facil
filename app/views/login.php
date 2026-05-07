@@ -32,7 +32,7 @@
             <button class="btn btn-primary w-100">Entrar</button>
         </form>
         <div class="text-center mt-2">
-            <a href="index.php?action=recuperar_simples">Recuperar minha senha</a>
+            <a href="index.php?action=recuperar_simples">Recuperar senha</a>
         </div>
         <p class="text-center text-muted small m-3">Gestão simples para seu negócio</p>
     </div>

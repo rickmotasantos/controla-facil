@@ -54,7 +54,7 @@ class VendaController
 
         $venda = new Venda($pdo);
 
-        $venda_id = $venda->criarVenda($total, $forma_pagamento);
+        $venda_id = $venda->criarVenda($total, $forma_pagamento, $empresa_id);
         $venda->adicionarItem($venda_id, $produto_id, $quantidade, $preco, $empresa_id);
         $venda->baixarEstoque($produto_id, $quantidade, $empresa_id);
 
@@ -69,7 +69,31 @@ class VendaController
         $empresa_id = $_SESSION['empresa_id'];
 
         $vendaModel = new Venda($pdo);
-        $vendas = $vendaModel->listarPorEmpresa($empresa_id);
+        $vendasRaw = $vendaModel->listarPorEmpresa($empresa_id);
+
+        $vendas = [];
+
+        foreach ($vendasRaw as $row) {
+            $id = $row['id'];
+
+            if (!isset($vendas[$id])) {
+                $vendas[$id] = [
+                    'id' => $row['id'],
+                    'total' => $row['total'],
+                    'forma_pagamento' => $row['forma_pagamento'],
+                    'data' => $row['data'],
+                    'itens' => []
+                ];
+            }
+
+            if ($row['produto_id']) {
+                $vendas[$id]['itens'][] = [
+                    'nome' => $row['produto_nome'],
+                    'quantidade' => $row['quantidade'],
+                    'preco' => $row['preco']
+                ];
+            }
+        }
 
         require __DIR__ . '/../views/historico_vendas.php';
     }
@@ -85,7 +109,13 @@ class VendaController
 
         $totalHoje = $venda->totalHoje($empresa_id);
         $totalMes = $venda->totalMes($empresa_id);
+
         $produtoTop = $venda->produtoMaisVendido($empresa_id);
+
+        // evita variável indefinida
+        if (!$produtoTop) {
+            $produtoTop = null;
+        }
 
         require_once __DIR__ . "/../views/dashboard.php";
     }

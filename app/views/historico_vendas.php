@@ -34,6 +34,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
             background: #0d6efd;
             padding: 10px;
         }
+
         @media (max-width: 768px) {
 
             .table thead {
@@ -86,7 +87,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
             .acoes-btns a {
                 flex: 1;
             }
-            
+
         }
     </style>
     <title>Histórico</title>
@@ -125,14 +126,46 @@ require_once __DIR__ . '/../middlewares/auth.php';
                         <th>Total</th>
                         <th>Pagamento</th>
                         <th>Data</th>
+                        <th>Itens</th>
                     </tr>
                 </thead>
                 <?php foreach ($vendas as $venda): ?>
                     <tbody>
                         <tr>
                             <td data-label="Total">R$ <?= number_format($venda['total'], 2, ',', '.') ?></td>
-                            <td data-label="Pagamento"><?= ($venda['forma_pagamento']) ?></td>
+                            <td data-label="Pagamento"><?= $venda['forma_pagamento'] ?></td>
                             <td data-label="Data"><?= date('d/m/y - H:i:s', strtotime($venda['data'])) ?></td>
+
+                            <td data-label="Ações">
+                                <button class="btn btn-sm btn-primary"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#venda<?= $venda['id'] ?>">
+                                    Ver detalhes
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr class="collapse" id="venda<?= $venda['id'] ?>">
+                            <td colspan="4">
+                                <strong>Itens da venda:</strong>
+
+                                <?php if (!empty($venda['itens'])): ?>
+
+                                    <ul class="mt-2">
+                                        <?php foreach ($venda['itens'] as $item): ?>
+                                            <li>
+                                                <?= $item['nome'] ?>
+                                                - <?= $item['quantidade'] ?>x
+                                                - R$ <?= number_format($item['preco'], 2, ',', '.') ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+
+                                <?php else: ?>
+                                    <p class="text-muted">Nenhum item encontrado</p>
+                                <?php endif; ?>
+
+                            </td>
                         </tr>
                     </tbody>
                 <?php endforeach; ?>

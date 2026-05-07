@@ -16,6 +16,15 @@ require_once __DIR__ . '/../middlewares/auth.php';
             background-color: #f5f7fa;
         }
 
+        .card-dashboard {
+            border-radius: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .card-dashboard:hover {
+            transform: translateY(-5px);
+        }
+
         .card-form {
             border-radius: 15px;
         }
@@ -62,21 +71,50 @@ require_once __DIR__ . '/../middlewares/auth.php';
         <h3 class="mb-3 text-center">Sistema Comércio</h3>
         <hr>
 
-        <div class="row d-flex justify-content-center">
+        <div class="row g-4">
 
             <div class="col-md-4">
-                <div class="card p-3 text-center">
+                <div class="card bg-success text-white p-4 text-center shadow border-0 card-dashboard">
                     <h5>Total Hoje</h5>
-                    <h3>R$ <?= $totalHoje['total'] ?? 0 ?></h3>
+
+                    <h3>
+                        R$ <?= number_format($totalHoje['total'] ?? 0, 2, ',', '.') ?>
+                    </h3>
                 </div>
             </div>
 
-            <div class="col-md-4 text-center">
-                <div class="card p-3">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white p-4 text-center shadow border-0 card-dashboard">
                     <h5>Total Mês</h5>
-                    <h3>R$ <?= $totalMes['total'] ?? 0 ?></h3>
+
+                    <h3>
+                        R$ <?= number_format($totalMes['total'] ?? 0, 2, ',', '.') ?>
+                    </h3>
                 </div>
             </div>
+
+            <div class="col-md-4">
+                <div class="card bg-warning p-4 text-center shadow border-0 card-dashboard">
+
+                    <h5>Produto Mais Vendido</h5>
+
+                    <?php if (!empty($produtoTop)): ?>
+
+                        <h4><?= $produtoTop['nome'] ?></h4>
+
+                        <small>
+                            <?= $produtoTop['total'] ?> vendas
+                        </small>
+
+                    <?php else: ?>
+
+                        <p>Nenhuma venda ainda</p>
+
+                    <?php endif; ?>
+
+                </div>
+            </div>
+
         </div>
     </div>
 </body>
