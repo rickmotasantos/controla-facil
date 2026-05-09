@@ -23,7 +23,13 @@
 - [x] Criar tela de detalhes da venda
 - [x] Adicionar botão "Ver detalhes" no histórico
 - [x] erro no histórico de venda
-- [] criar niveis de acesso
+
+## Níveis de acesso 
+- [x] criar niveis de acesso
+
+## criar na tabela de histório(admin)
+
+- [] opção de separar os produto por empresa(com o nome de cada empresa)
 
 ### 📅 Período e filtros
 - [ ] Filtro por data (data início / data fim)
