@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/../middlewares/permissao.php';
+
+somenteEmpresa();
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -57,6 +62,16 @@
 
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
         <div class="col-12 col-md-6 col-lg-4">
+            <?php if (isset($_SESSION['msg'])): ?>
+
+                <div class="alert alert-<?= $_SESSION['msg_tipo'] ?> alert-dismissible fade show">
+                    <?= $_SESSION['msg'] ?>
+                </div>
+
+            <?php
+                unset($_SESSION['msg'], $_SESSION['msg_tipo']);
+            endif;
+            ?>
             <div class="card shadow-sm p-4 card-form">
                 <h5 class="mb-4 text-center">Cadastrar Produtos</h5>
                 <form method="post" action="index.php?action=salvar" class="row g-2 mb-4">
@@ -92,3 +107,11 @@
 
 </html>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    setTimeout(() => {
+        const alert = document.querySelector('.alert');
+        if(alert){
+            alert.remove();
+        }
+    }, 3000);
+</script>

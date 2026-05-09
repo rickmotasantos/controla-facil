@@ -1,5 +1,8 @@
 <?php
 require_once __DIR__ . '/../middlewares/auth.php';
+require_once __DIR__ . '/../middlewares/permissao.php';
+
+somenteEmpresa();
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">

@@ -1,5 +1,8 @@
 <?php
 require_once __DIR__ . '/../middlewares/auth.php';
+require_once __DIR__ . '/../middlewares/permissao.php';
+
+somenteEmpresa();
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -90,12 +93,12 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
         }
     </style>
-    <title>Histórico</title>
+    <title>Histórico de Vendas</title>
 </head>
 
 <body>
     <div class="topbar d-flex justify-content-between align-items-center px-3 text-white">
-        <strong>📈 Histórico</strong>
+        <strong>📈 Histórico de vendas</strong>
         <div class="dropdown">
             <button class="btn text-white dropdown-toggle" data-bs-toggle="dropdown">
                 <i class="bi bi-person-circle" style="font-size: 20px;"></i>
@@ -114,7 +117,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
         </div>
     </div>
     <div class="container">
-        <h3 class="m-3 text-center">Sistema Comércio</h3>
+        <h3 class="m-3 text-center">Sistema</h3>
         <hr>
 
         <h5 class="m-2">Histórico de Vendas</h5>

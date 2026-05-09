@@ -22,7 +22,8 @@
 - [x] Mostrar itens da venda (itens_venda)
 - [x] Criar tela de detalhes da venda
 - [x] Adicionar botão "Ver detalhes" no histórico
-- [] erro no histórico de venda
+- [x] erro no histórico de venda
+- [] criar niveis de acesso
 
 ### 📅 Período e filtros
 - [ ] Filtro por data (data início / data fim)

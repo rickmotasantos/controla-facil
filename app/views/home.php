@@ -44,7 +44,7 @@
                     <h4 class="fw-bold text-primary">ControlaFácil</h4>
                     <small class="text-muted"> Seu estoque na palma da mão</small>
                 </div>
-                <div >
+                <div>
                     <a href="index.php?action=logout"
                         class="btn btn-light rounded-circle shadow-sm"
                         style="width:40px; height:40px;"
@@ -55,16 +55,16 @@
                     </a>
                 </div>
             </div>
-
-            <div class="col-6">
-                <a href="index.php?action=estoque" class="text-decoration-none">
-                    <div class="card card-menu shadow-sm">
-                        <div class="icon text-warning">📦</div>
-                        <div>Estoque</div>
-                    </div>
-                </a>
-            </div>
-
+            <?php if ($_SESSION['tipo'] != 'funcionario'): ?>
+                <div class="col-6">
+                    <a href="index.php?action=estoque" class="text-decoration-none">
+                        <div class="card card-menu shadow-sm">
+                            <div class="icon text-warning">📦</div>
+                            <div>Estoque</div>
+                        </div>
+                    </a>
+                </div>
+            <?php endif; ?>
             <div class="col-6">
                 <a href="index.php?action=vendas" class="text-decoration-none">
                     <div class="card card-menu shadow-sm">
@@ -73,49 +73,68 @@
                     </div>
                 </a>
             </div>
-
-            <div class="col-6">
-                <a href="index.php?action=historico" class="text-decoration-none">
-                    <div class="card card-menu shadow-sm">
-                        <div class="icon text-danger">📈</div>
-                        <div>Histórico</div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6">
-                <a href="index.php?action=entrada" class="text-decoration-none">
-                    <div class="card card-menu shadow-sm">
-                        <div class="icon text-danger">📦➕</div>
-                        <div>Entrada de Estoque</div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6">
-                <a href="index.php?action=dashboard" class="text-decoration-none">
-                    <div class="card card-menu shadow-sm">
-                        <div class="icon text-danger">📊</div>
-                        <div>Dashboard</div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6">
-                <a href="index.php?action=cadastrar_produto" class="text-decoration-none">
-                    <div class="card card-menu shadow-sm">
-                        <div class="icon text-danger">➕</div>
-                        <div>cadastrar Produto</div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-6">
-                <?php if (($_SESSION['tipo'] ?? '') === 'admin'): ?>
-                    <a class="text-decoration-none" href="index.php?action=admin_dashboard">
+            <?php if ($_SESSION['tipo'] != 'funcionario'): ?>
+                <div class="col-6">
+                    <a href="index.php?action=historico" class="text-decoration-none">
                         <div class="card card-menu shadow-sm">
-                            <div class="icon text-danger">⚙️ <i class="bi bi-shield"></i></div>
-                            <div>Administração</div>
+                            <div class="icon text-danger">📈</div>
+                            <div>Histórico</div>
                         </div>
                     </a>
-                <?php endif; ?>
-            </div>
+                </div>
+            <?php endif; ?>
+            <?php if ($_SESSION['tipo'] != 'funcionario'): ?>
+                <div class="col-6">
+                    <a href="index.php?action=entrada" class="text-decoration-none">
+                        <div class="card card-menu shadow-sm">
+                            <div class="icon text-danger">📦➕</div>
+                            <div>Entrada de Estoque</div>
+                        </div>
+                    </a>
+                </div>
+            <?php endif; ?>
+            <?php if ($_SESSION['tipo'] != 'funcionario'): ?>
+                <div class="col-6">
+                    <a href="index.php?action=dashboard" class="text-decoration-none">
+                        <div class="card card-menu shadow-sm">
+                            <div class="icon text-danger">📊</div>
+                            <div>Dashboard</div>
+                        </div>
+                    </a>
+                </div>
+            <?php endif; ?>
+            <?php if ($_SESSION['tipo'] != 'funcionario'): ?>
+                <div class="col-6">
+                    <a href="index.php?action=cadastrar_produto" class="text-decoration-none">
+                        <div class="card card-menu shadow-sm">
+                            <div class="icon text-danger">➕</div>
+                            <div>cadastrar Produto</div>
+                        </div>
+                    </a>
+                </div>
+            <?php endif; ?>
+            <?php if ($_SESSION['tipo'] != 'funcionario'): ?>
+                <div class="col-6">
+                    <?php if (($_SESSION['tipo'] ?? '') === 'admin'): ?>
+                        <a class="text-decoration-none" href="index.php?action=admin_dashboard">
+                            <div class="card card-menu shadow-sm">
+                                <div class="icon text-danger">⚙️ <i class="bi bi-shield"></i></div>
+                                <div>Administração</div>
+                            </div>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+            <?php if ($_SESSION['tipo'] == 'empresa' || $_SESSION['tipo'] == 'admin'): ?>
+                <div class="col-6">
+                    <a class="text-decoration-none" href="index.php?action=cadastrar_funcionario">
+                        <div class="card card-menu shadow-sm">
+                            <div class="icon text-danger"><i class="bi bi-person-plus"></i></div>
+                            <div>Cadastrar Usuário</div>
+                        </div>
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 

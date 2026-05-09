@@ -20,7 +20,7 @@ class ProdutoController
         $_SESSION['msg'] = "Produto criado com sucesso!";
         $_SESSION['msg_tipo'] = "success";
 
-        header("Location: index.php");
+        header("Location: index.php?action=cadastrar_produto");
         exit;
     }
 

@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '../../../middlewares/permissao.php';
+
+somenteAdmin();
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -45,6 +50,16 @@
       </aside>
 
       <main class="col-md-10 p-4">
+        <?php if (isset($_SESSION['msg'])): ?>
+
+          <div class="alert alert-<?= $_SESSION['msg_tipo'] ?> alert-dismissible fade show">
+            <?= $_SESSION['msg'] ?>
+          </div>
+
+        <?php
+          unset($_SESSION['msg'], $_SESSION['msg_tipo']);
+        endif;
+        ?>
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h2>Painel Administrativo</h2>
 
@@ -123,12 +138,12 @@
                       <td><?= ucfirst($empresa['status']) ?></td>
                       <td>
                         <a href="index.php?action=editarEmpresa&id=<?= $empresa['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="index.php?action=excluirEmpresa&id=<?= $empresa['id']?>" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
-                        <?php if($empresa['status'] == 'ativo'):?>
+                        <a href="index.php?action=excluirEmpresa&id=<?= $empresa['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
+                        <?php if ($empresa['status'] == 'ativo'): ?>
                           <a href="index.php?action=alterarStatusEmpresa&id=<?= $empresa['id'] ?>&status=suspenso" class="btn btn-secondary btn-sm" onclick="return confirm('Deseja inativer este cliente')">Inativar</a>
-                          <?php else:?>
-                            <a href="index.php?action=alterarStatusEmpresa&id=<?= $empresa['id']?>&status=ativo" class="btn btn-success btn-sm" onclick="return confirm('Deseja ativar esta cliente')">Ativar</a>
-                            <?php endif;?>
+                        <?php else: ?>
+                          <a href="index.php?action=alterarStatusEmpresa&id=<?= $empresa['id'] ?>&status=ativo" class="btn btn-success btn-sm" onclick="return confirm('Deseja ativar esta cliente')">Ativar</a>
+                        <?php endif; ?>
                       </td>
                     </tr>
                   <?php endforeach; ?>
@@ -137,7 +152,7 @@
             </div>
           </div>
         </div>
-        <div class="modal fade" id="modalNovaEmpresa" tabeindex="-1" role="dialog">
+        <div class="modal fade" id="modalNovaEmpresa" tabindex="-1" role="dialog">
           <div class="modal-dialog">
             <div class="modal-content">
               <form action="index.php?action=salvarEmpresa" method="post">
@@ -173,6 +188,15 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    setTimeout(() => {
+      const alert = document.querySelector('.alert');
+
+      if (alert) {
+        alert.remove();
+      }
+    }, 3000);
+  </script>
 </body>
 
 </html>

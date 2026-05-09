@@ -168,4 +168,37 @@ class AuthController
         header("Location: index.php?action=login");
         exit;
     }
+
+    public function cadastrarFuncionario()
+    {
+        require __DIR__ . '/../views/cadastrar_funcionario.php';
+    }
+
+    public function salvarFuncionario()
+    {
+        $pdo = conectarBanco();
+
+        $nome = $_POST['nome'];
+        $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+
+        $empresa_id = $_SESSION['empresa_id'];
+
+        $stmt = $pdo->prepare("
+        INSERT INTO usuarios
+        (nome, senha, empresa_id, tipo)
+        VALUES (?, ?, ?, 'funcionario')
+    ");
+
+        $stmt->execute([
+            $nome,
+            $senha,
+            $empresa_id
+        ]);
+
+        $_SESSION['msg'] = "Funcionário cadastrado!";
+        $_SESSION['msg_tipo'] = "success";
+
+        header("Location: index.php?action=home");
+        exit;
+    }
 }

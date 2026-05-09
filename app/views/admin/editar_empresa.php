@@ -1,3 +1,8 @@
+<?php
+require_once __DIR__ . '/../middlewares/permissao.php';
+
+somenteAdmin();
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
