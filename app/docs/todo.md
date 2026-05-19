@@ -27,9 +27,13 @@
 ## Níveis de acesso 
 - [x] criar niveis de acesso
 
-## criar na tabela de histório(admin)
+## notas
+- [] criar tela de impressão de notas
 
+## criar na tabela de Produtos(admin)
 - [] opção de separar os produto por empresa(com o nome de cada empresa)
+- [x] alterar permissão na tela de venda
+
 
 ### 📅 Período e filtros
 - [ ] Filtro por data (data início / data fim)

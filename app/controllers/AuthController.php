@@ -55,8 +55,13 @@ class AuthController
             $_SESSION['usuario_nome'] = $usuario['nome'];
             $_SESSION['tipo'] = $usuario['tipo'];
 
-            header("Location: index.php?action=home");
-            exit;
+            if($usuario['tipo'] === 'funcionario'){
+                header("Location: index.php?action=vendas");
+                exit;
+            }else{
+                header("Location: index.php?action=home");
+                exit;
+            }
         } else {
             $_SESSION['msg'] = "Usuário ou senha inválidos";
             $_SESSION['msg_tipo'] = "danger";

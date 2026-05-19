@@ -41,7 +41,7 @@ somenteEmpresa();
 </head>
 <body>
     <div class="topbar d-flex justify-content-between align-items-center px-3 text-white">
-        <strong>📦 Estoque</strong>
+        <strong><i class="bi bi-box"></i> Estoque</strong>
         <div class="dropdown">
             <button class="btn text-white dropdown-toggle" data-bs-toggle="dropdown">
                 <i class="bi bi-person-circle" style="font-size: 20px;"></i>
@@ -96,7 +96,7 @@ somenteEmpresa();
 
                     <div class="d-flex align-items-center gap-2">
                         <span class="badge bg-warning text-dark">&nbsp;&nbsp;</span>
-                        <small>Estoque baixo (até 5)</small>
+                        <small>Estoque baixo (ate 5)</small>
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
@@ -117,7 +117,7 @@ somenteEmpresa();
                         <th>Nome</th>
                         <th>Preço</th>
                         <th>Qtd</th>
-                        <th>Ações</th>
+                        <th>Itens</th>
                     </tr>
                 </thead>
 
@@ -146,7 +146,7 @@ somenteEmpresa();
                                 <td data-label="Nome"><?= htmlspecialchars($p['nome']) ?></td>
                                 <td data-label="Preço">R$ <?= htmlspecialchars(number_format($p['preco'], 2, ',', '.')) ?></td>
                                 <td data-label="Qtd"><?= htmlspecialchars($p['quantidade']) ?></td>
-                                <td data-label="Ações" class="text-center">
+                                <td data-label="Itens" class="text-center">
                                     <a href="index.php?action=editar&id=<?= $p['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
                                     <a href="index.php?action=excluir&id=<?= $p['id'] ?>"
                                         onclick="return confirm('Tem certeza?')"

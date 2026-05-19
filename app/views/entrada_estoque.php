@@ -43,7 +43,7 @@ somenteEmpresa();
 
 <body>
     <div class="topbar d-flex justify-content-between align-items-center px-3 text-white">
-        <strong>📦➕ Entrada de Estoque</strong>
+        <strong><i class="bi bi-box-arrow-in-up"></i> Entrada de Estoque</strong>
         <div class="dropdown">
             <button class="btn text-white dropdown-toggle" data-bs-toggle="dropdown">
                 <i class="bi bi-person-circle" style="font-size: 20px;"></i>
@@ -78,7 +78,7 @@ somenteEmpresa();
         <form method="POST" action="index.php?action=adicionar_estoque" class="row g-3">
 
             <div class="col-md-4">
-                <label>Código ou descrição</label>
+                <label>Codigo ou descricao</label>
                 <input type="text" name="codigo" class="form-control" required>
             </div>
 

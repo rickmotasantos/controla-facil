@@ -222,46 +222,99 @@ class VendaController
     {
         $pdo = conectarBanco();
 
+        $empresa_id = $_SESSION['empresa_id'];
+        $carrinho = $_SESSION['carrinho'] ?? [];
+        $forma_pagamento = $_POST['forma_pagamento'] ?? '';
+        $imprimir = isset($_POST['imprimir']);
+
+        if (empty($carrinho)) {
+
+            $_SESSION['msg'] = "Carrinho vazio!";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=vendas");
+            exit;
+        }
+
+        if (empty($forma_pagamento)) {
+
+            $_SESSION['msg'] = "Selecione a forma de pagamento!";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=vendas");
+            exit;
+        }
+
         try {
+
             $pdo->beginTransaction();
 
-            $empresa_id = $_SESSION['empresa_id'];
-            $carrinho = $_SESSION['carrinho'] ?? [];
-
-            if (empty($carrinho)) {
-                $_SESSION['msg'] = "Carrinho vazio!";
-                $_SESSION['msg_tipo'] = "danger";
-                header("Location: index.php?action=vendas");
-                exit;
-            }
-
-            $forma_pagamento = $_POST['forma_pagamento'] ?? '';
             $total = 0;
 
             foreach ($carrinho as $item) {
 
-                $stmt = $pdo->prepare("SELECT quantidade FROM produtos WHERE id = ? AND empresa_id = ?");
-                $stmt->execute([$item['id'], $empresa_id]);
+                $stmt = $pdo->prepare("
+                SELECT quantidade 
+                FROM produtos 
+                WHERE id = ? AND empresa_id = ?
+            ");
+
+                $stmt->execute([
+                    $item['id'],
+                    $empresa_id
+                ]);
+
                 $produto = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                if (!$produto || $produto['quantidade'] < $item['quantidade']) {
-                    throw new Exception("Estoque insuficiente");
+                if (!$produto) {
+                    throw new Exception(
+                        "Produto não encontrado: " . $item['nome']
+                    );
+                }
+
+                if ($produto['quantidade'] <= 0) {
+                    throw new Exception(
+                        "Produto sem estoque: " . $item['nome']
+                    );
+                }
+
+                if ($produto['quantidade'] < $item['quantidade']) {
+                    throw new Exception(
+                        "Estoque insuficiente para: " . $item['nome']
+                    );
                 }
 
                 $total += $item['preco'] * $item['quantidade'];
             }
 
-            $stmt = $pdo->prepare("INSERT INTO vendas (total, forma_pagamento, empresa_id) VALUES (?, ?, ?)");
-            $stmt->execute([$total, $forma_pagamento, $empresa_id]);
+            $stmt = $pdo->prepare("
+            INSERT INTO vendas (
+                total,
+                forma_pagamento,
+                empresa_id
+            ) VALUES (?, ?, ?)
+        ");
+
+            $stmt->execute([
+                $total,
+                $forma_pagamento,
+                $empresa_id
+            ]);
 
             $venda_id = $pdo->lastInsertId();
 
             foreach ($carrinho as $item) {
 
                 $stmt = $pdo->prepare("
-                INSERT INTO itens_venda (venda_id, produto_id, quantidade, preco, empresa_id)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO itens_venda (
+                    venda_id,
+                    produto_id,
+                    quantidade,
+                    preco,
+                    empresa_id
+                ) VALUES (?, ?, ?, ?, ?)
             ");
+
                 $stmt->execute([
                     $venda_id,
                     $item['id'],
@@ -271,10 +324,11 @@ class VendaController
                 ]);
 
                 $stmt = $pdo->prepare("
-                UPDATE produtos 
-                SET quantidade = quantidade - ? 
+                UPDATE produtos
+                SET quantidade = quantidade - ?
                 WHERE id = ? AND empresa_id = ?
             ");
+
                 $stmt->execute([
                     $item['quantidade'],
                     $item['id'],
@@ -289,18 +343,23 @@ class VendaController
             $_SESSION['msg'] = "Venda realizada com sucesso!";
             $_SESSION['msg_tipo'] = "success";
 
-            header("Location: index.php?action=vendas");
-            exit;
+            if($imprimir){
+                header("location: index.php?action=imprimirNota&id=" . $venda_id);
+                exit;
+            }
+
         } catch (Exception $e) {
 
-            $pdo->rollBack();
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
 
-            $_SESSION['msg'] = "Erro ao finalizar venda!";
+            $_SESSION['msg'] = "Erro: " . $e->getMessage();
             $_SESSION['msg_tipo'] = "danger";
-
-            header("Location: index.php?action=vendas");
-            exit;
         }
+
+        header("Location: index.php?action=vendas");
+        exit;
     }
 
     public function buscarProduto()
@@ -323,5 +382,39 @@ class VendaController
         header('Content-Type: application/json');
         echo json_encode($produtos);
         exit;
+    }
+
+    public function imprimirNota(){
+        $pdo = conectarBanco();
+
+        $venda_id = $_GET['id'] ?? null;
+        $empresa_id = $_SESSION['empresa_id'];
+
+
+        $stmt = $pdo->prepare("
+        SELECT 
+        v.id AS venda_id,
+        v.total,
+        v.forma_pagamento,
+        v.data,
+        iv.quantidade,
+        iv.preco,
+        p.nome
+        FROM vendas v
+        INNER JOIN itens_venda iv
+        ON iv.venda_id = v.id
+        INNER JOIN produtos p
+        ON p.id = iv.produto_id
+        WHERE v.id  = ? AND v.empresa_id = ?
+        ");
+
+        $stmt->execute([
+            $venda_id,
+            $empresa_id
+        ]);
+
+        $itens = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        require  __DIR__ . '/../views/imprimir_nota.php';
     }
 }

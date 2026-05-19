@@ -11,7 +11,7 @@ somenteEmpresa();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="shortcut icon" href="assets/favicon.png" type="image/png">
     <style>
         body {
@@ -98,7 +98,7 @@ somenteEmpresa();
 
 <body>
     <div class="topbar d-flex justify-content-between align-items-center px-3 text-white">
-        <strong>📈 Histórico de vendas</strong>
+        <strong><i class="bi bi-clock-history"></i> Historico de Vendas</strong>
         <div class="dropdown">
             <button class="btn text-white dropdown-toggle" data-bs-toggle="dropdown">
                 <i class="bi bi-person-circle" style="font-size: 20px;"></i>
@@ -129,7 +129,7 @@ somenteEmpresa();
                         <th>Total</th>
                         <th>Pagamento</th>
                         <th>Data</th>
-                        <th>Itens</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <?php foreach ($vendas as $venda): ?>
@@ -139,7 +139,7 @@ somenteEmpresa();
                             <td data-label="Pagamento"><?= $venda['forma_pagamento'] ?></td>
                             <td data-label="Data"><?= date('d/m/y - H:i:s', strtotime($venda['data'])) ?></td>
 
-                            <td data-label="Ações">
+                            <td data-label="Itens">
                                 <button class="btn btn-sm btn-primary"
                                     data-bs-toggle="collapse"
                                     data-bs-target="#venda<?= $venda['id'] ?>">

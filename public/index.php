@@ -170,6 +170,9 @@ switch ($action) {
     case 'salvar_funcionário':
         (new AuthController())->salvarFuncionario();
         break;
+    case 'imprimirNota':
+        (new VendaController())->imprimirNota();
+        break;
     default:
         (new ProdutoController())->index();
         break;

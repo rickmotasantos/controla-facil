@@ -41,7 +41,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
 <body class="bg-light">
 
     <div class="topbar d-flex justify-content-between align-items-center px-3 text-white">
-        <strong>💰 Vendas</strong>
+        <strong><i class="bi bi-cash-coin"></i> Vendas</strong>
         <div class="dropdown">
             <button class="btn text-white dropdown-toggle" data-bs-toggle="dropdown">
                 <i class="bi bi-person-circle" style="font-size: 20px;"></i>
@@ -50,26 +50,45 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
             <ul class="dropdown-menu dropdown-menu-end">
 
-                <li>
-                    <a class="dropdown-item text-danger" href="index.php?action=home">
-                        <i class="bi bi-house"></i> Home
-                    </a>
-                </li>
+                <?php if ($_SESSION['tipo'] === 'funcionario'): ?>
+
+                    <li>
+                        <a class="dropdown-item text-danger" href="index.php?action=logout">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </a>
+                    </li>
+
+                <?php else: ?>
+
+                    <li>
+                        <a class="dropdown-item" href="index.php?action=home">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item text-danger" href="index.php?action=logout">
+                            <i class="bi bi-box-arrow-right"></i> Sair
+                        </a>
+                    </li>
+
+                <?php endif; ?>
 
             </ul>
         </div>
     </div>
     <div class="container py-3">
-        <h3 class="text-center m-3">Sistema Comércio</h3>
+        <h3 class="text-center m-3">Sistema de Comércio</h3>
 
         <hr>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="m-2">Nova Venda</h5>
-
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalEntradaProduto">
-                <i class="bi bi-plus-circle"></i> Dar entrada
-            </button>
+            <?php if ($_SESSION['tipo'] === 'empresa'): ?>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalEntradaProduto">
+                    <i class="bi bi-plus-circle"></i> Dar entrada
+                </button>
+            <?php endif; ?>
         </div>
 
         <div class="modal fade" id="modalEntradaProduto" tabindex="-1">
@@ -126,7 +145,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
             <input type="hidden" name="produto_id" id="produto_id">
 
             <div class="col-12 col-md-5 position-relative">
-                <input type="text" id="busca_produto" class="form-control" placeholder="Digite código ou nome">
+                <input type="text" id="busca_produto" class="form-control" placeholder="Digite o código ou nome">
 
                 <div id="resultado_busca" class="list-group mt-2 shadow position-absolute w-100"></div>
             </div>
@@ -176,7 +195,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
         </ul>
 
-        <form method="post" action="index.php?action=finalizarCarrinho" class="mt-3">
+        <form method="post" action="index.php?action=finalizarCarrinho" class="mt-3" id="formFinalizarVenda">
 
             <div class="row g-2 align-items-end">
 
@@ -358,8 +377,32 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
         });
     </script>
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
 
-    </scrip>
-</body>
+            const formFinalizar = document.getElementById('formFinalizarVenda');
+
+            formFinalizar.addEventListener('submit', function(e) {
+
+                let confirmar = confirm(
+                    "Deseja imprimir a nota após finalizar a venda?"
+                );
+
+                if (confirmar) {
+
+                    let input = document.createElement('input');
+
+                    input.type = 'hidden';
+                    input.name = 'imprimir';
+                    input.value = '1';
+
+                    formFinalizar.appendChild(input);
+                }
+
+            });
+
+        });
+    </script>
 
 </html>
