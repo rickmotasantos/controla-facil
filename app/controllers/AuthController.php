@@ -18,6 +18,7 @@ class AuthController
 
         $pdo = conectarBanco();
 
+
         $nome = $_POST['nome'];
         $senha = $_POST['senha'];
 
@@ -27,7 +28,7 @@ class AuthController
         if ($usuario && password_verify($senha, $usuario['senha'])) {
 
             // bloqueio para clientes empresa
-            if ($usuario['tipo'] === 'empresa') {
+            if (!empty($usuario['empresa_id'])) {
 
                 $stmt = $pdo->prepare("
                 SELECT status 
@@ -55,10 +56,21 @@ class AuthController
             $_SESSION['usuario_nome'] = $usuario['nome'];
             $_SESSION['tipo'] = $usuario['tipo'];
 
-            if($usuario['tipo'] === 'funcionario'){
+            $stmt = $pdo->prepare("
+            INSERT INTO acessos (
+            usuario_id,
+            empresa_id,
+            login_em)
+            VALUES (?, ?, NOW())");
+
+            $stmt->execute([$usuario['id'], $usuario['empresa_id']]);
+
+            $_SESSION['acesso_id'] = $pdo->lastInsertId();
+
+            if ($usuario['tipo'] === 'funcionario') {
                 header("Location: index.php?action=vendas");
                 exit;
-            }else{
+            } else {
                 header("Location: index.php?action=home");
                 exit;
             }
@@ -73,6 +85,25 @@ class AuthController
 
     public function logout()
     {
+        $pdo = conectarBanco();
+
+        $acesso_id = $_SESSION['acesso_id'] ?? null;
+
+        if($acesso_id) {
+            $stmt = $pdo->prepare("
+            UPDATE acessos
+            SET logout_em = NOW(),
+            tempo_conectado = TIMESTAMPDIFF(
+            MINUTE,
+            login_em,
+            NOW()
+            )
+            WHERE id = ?
+            ");
+
+            $stmt->execute([$acesso_id]);
+        }
+
         session_unset();
         session_destroy();
 

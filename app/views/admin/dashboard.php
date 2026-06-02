@@ -23,8 +23,8 @@ somenteAdmin();
         <h4 class="mb-4">Admin</h4>
 
         <div class="d-grid gap-2">
-          <a href="#" class="btn btn-outline-light text-start">
-            <i class="bi bi-speedometer2"></i> Dashboard
+          <a href="index.php?action=acessos" class="btn btn-outline-light text-start">
+            <i class="bi bi-speedometer2"></i> Monitorar Acessos
           </a>
 
           <a href="#" class="btn btn-outline-light text-start">

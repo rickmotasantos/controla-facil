@@ -16,7 +16,8 @@ $rotasPublicas = ['login', 'autenticar', 'recuperar_simples', 'reset_simples'];
 $rotasAdmin = [
     'admin_dashboard',
     'usuarios',
-    'empresas'
+    'empresas',
+    'acessos'
 ];
 
 function isAdmin()
@@ -172,6 +173,12 @@ switch ($action) {
         break;
     case 'imprimirNota':
         (new VendaController())->imprimirNota();
+        break;
+    case 'acessos':
+        require_once BASE_PATH . '/app/controllers/AcessoController.php';
+
+        $controller = new AcessoController();
+        $controller->listar();
         break;
     default:
         (new ProdutoController())->index();

@@ -23,12 +23,13 @@
 - [x] Criar tela de detalhes da venda
 - [x] Adicionar botão "Ver detalhes" no histórico
 - [x] erro no histórico de venda
+- [] subir para hostgator imprimir nota(index.php)
 
 ## Níveis de acesso 
 - [x] criar niveis de acesso
 
 ## notas
-- [] criar tela de impressão de notas
+- [x] criar tela de impressão de notas
 
 ## criar na tabela de Produtos(admin)
 - [] opção de separar os produto por empresa(com o nome de cada empresa)
