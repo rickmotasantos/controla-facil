@@ -8,11 +8,11 @@ class Produto
         $this->pdo = $pdo;
     }
 
-    public function criar($nome, $preco, $quantidade, $codigo, $empresa_id)
+    public function criar($nome, $preco, $quantidade, $codigo, $empresa_id, $unidade_medida = 'UN')
     {
-        $sql = "INSERT INTO produtos (nome, preco, quantidade, codigo, empresa_id) VALUES (?,?, ?, ?, ?)";
+        $sql = "INSERT INTO produtos (nome, preco, quantidade, codigo, empresa_id, unidade_medida) VALUES (?,?,?,?,?,?)";
         $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id]);
+        return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id, $unidade_medida]);
     }
 
     public function listar()
@@ -33,16 +33,16 @@ class Produto
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function atualizar($id, $nome, $preco, $quantidade, $codigo, $empresa_id, $tipo)
+    public function atualizar($id, $nome, $preco, $quantidade, $codigo, $empresa_id, $tipo, $unidade_medida = 'UN')
     {
         if ($tipo === 'admin') {
-            $sql = "UPDATE produtos SET nome=?, preco=?, quantidade=?, codigo=?, empresa_id=? WHERE id=?";
+            $sql = "UPDATE produtos SET nome=?, preco=?, quantidade=?, codigo=?, empresa_id=?, unidade_medida=? WHERE id=?";
             $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id, $id]);
+            return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id, $unidade_medida, $id]);
         } else {
-            $sql = "UPDATE produtos SET nome=?, preco=?, quantidade=?, codigo=?, empresa_id=? WHERE id=? AND empresa_id= ?";
+            $sql = "UPDATE produtos SET nome=?, preco=?, quantidade=?, codigo=?, empresa_id=?, unidade_medida=? WHERE id=? AND empresa_id= ?";
             $stmt = $this->pdo->prepare($sql);
-            return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id, $id, $empresa_id]);
+            return $stmt->execute([$nome, $preco, $quantidade, $codigo, $empresa_id, $unidade_medida, $id, $empresa_id]);
         }
     }
 

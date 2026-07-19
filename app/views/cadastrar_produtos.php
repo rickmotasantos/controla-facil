@@ -51,7 +51,7 @@ somenteEmpresa();
 
             <ul class="dropdown-menu dropdown-menu-end">
                 <li>
-                    <a class="dropdown-item text-danger" href="index.php?action=home">
+                    <a class="dropdown-item text-primary" href="index.php?action=home">
                         <i class="bi bi-box-arrow-right"></i> Home
                     </a>
                 </li>
@@ -93,7 +93,17 @@ somenteEmpresa();
 
                     <div class="mb-3 input-group">
                         <span class="input-group-text"><i class="bi bi-plus"></i></span>
-                        <input type="number" name="quantidade" class="form-control" placeholder="Qtd" required>
+                        <input type="number" name="quantidade" class="form-control" placeholder="Qtd"  step="0.001" min="0.001" required>
+                    </div>
+
+                    <div class="mb-3 input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-rulers"></i>
+                        </span>
+                        <select name="unidade_medida" class="form-select input-group-text" required>
+                            <option value="UN">Unidade</option>
+                            <option value="KG">Peso (Kg)</option>
+                        </select>
                     </div>
 
                     <div class="col-12">

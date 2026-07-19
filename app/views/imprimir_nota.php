@@ -8,11 +8,21 @@
     <style>
         body {
             font-family: monospace;
-            width: 300px;
             margin: auto;
+            padding: 20px;
             color: #000;
             font-size: 13px;
-            padding: 10px;
+        }
+
+        .nota {
+            width: 300px;
+            max-width: 320px;
+            margin: auto;
+            background-color: #fff;
+            padding: 15px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, .15);
         }
 
         .center {
@@ -81,9 +91,22 @@
 
         @media print {
 
+        @page {
+            size: 80mm auto;
+            margin: 3mm;
+        }
+
             body {
+                padding: 0;
+                background: white;
+            }
+
+            .nota{
+                max-width: 80mm;
                 width: 100%;
                 padding: 0;
+                box-shadow: none;
+                border: none;
             }
 
         }
@@ -91,12 +114,13 @@
 </head>
 
 <body>
+    <div class="nota">
 
     <div class="center">
-        <h2>EMPRESA XYZ</h2>
+        <h2><?php echo $empresa['nome'];?></h2>
 
         <p class="info">Rua Exemplo, 123 - RJ</p>
-        <p class="info">(21) 91234-5678</p>
+        <p class="info"><?php echo $empresa['telefone'];?></p>
         <p class="info">CNPJ: 12.345.678/0001-90</p>
     </div>
 
@@ -164,14 +188,15 @@
         <br>
         Volte sempre 😊
     </div>
-
-    <script>
-
-        window.onload = function () {
+    </div>
+</body>
+</html>
+<script>
+        window.onload = function() {
 
             window.print();
 
-            window.onafterprint = function () {
+            window.onafterprint = function() {
 
                 window.location.href = "index.php?action=vendas";
 
@@ -179,8 +204,13 @@
 
         }
 
+        function imprimirNota() {
+
+            window.print();
+
+            window.onafterprint = function() {
+                window.location.href = "index.php?action=vendas";
+            };
+
+        }
     </script>
-
-</body>
-
-</html>

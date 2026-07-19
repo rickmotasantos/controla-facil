@@ -53,7 +53,7 @@ somenteEmpresa();
             <ul class="dropdown-menu dropdown-menu-end">
 
                 <li>
-                    <a class="dropdown-item text-danger" href="index.php?action=home">
+                    <a class="dropdown-item text-primary" href="index.php?action=home">
                         <i class="bi bi-house"></i> Home
                     </a>
                 </li>
@@ -78,7 +78,7 @@ somenteEmpresa();
         <form method="POST" action="index.php?action=adicionar_estoque" class="row g-3">
 
             <div class="col-md-4">
-                <label>Codigo ou descricao</label>
+                <label>Código ou descrição</label>
                 <input type="text" name="codigo" class="form-control" required>
             </div>
 
@@ -93,8 +93,8 @@ somenteEmpresa();
             </div>
 
             <div class="col-md-4">
-                <label>Quantidade</label>
-                <input type="number" name="quantidade" class="form-control" required>
+                <label id="label_quantidade">Quantidade</label>
+                <input type="number" name="quantidade" id="quantidade" class="form-control" min="0.001" step="0.001" required>
             </div>
 
             <div class="col-md-4 d-flex align-items-end">
@@ -113,6 +113,8 @@ somenteEmpresa();
             const inputCodigo = document.querySelector('[name="codigo"]');
             const nomeProduto = document.getElementById('nome_produto');
             const estoqueProduto = document.getElementById('estoque_produto');
+            const labelQuantidade = document.getElementById('label_quantidade');
+            const inputQuantidade = document.getElementById('quantidade');
 
             let timer;
 
@@ -135,8 +137,24 @@ somenteEmpresa();
                         const produtos = await res.json();
 
                         if (produtos.length > 0) {
-                            nomeProduto.value = produtos[0].nome;
-                            estoqueProduto.value = produtos[0].quantidade;
+                            const produto = produtos[0];
+
+                            nomeProduto.value = produto.nome;
+                            if(produto.unidade_medida === 'KG'){
+                                estoqueProduto.value = parseFloat(produto.quantidade).toLocaleString('pt-BR', { maximumFractionDigits: 3, maximumFractionDigits: 3 }) + ' KG';
+
+                                labelQuantidade.innerHTML = 'Peso (KG)';
+
+                                inputQuantidade.step = "0.001";
+                                inputQuantidade.min = "0.001";
+                            }else{
+                                estoqueProduto.value = parseInt(produto.quantidade) + ' UN';
+
+                                labelQuantidade.innerHTML = 'Quantidade';
+
+                                inputQuantidade.step = "1";
+                                inputQuantidade.min = "1";
+                            }
                         } else {
                             nomeProduto.value = 'Produto não encontrado';
                             estoqueProduto.value = '';

@@ -37,7 +37,7 @@
     </style>
 </head>
 <body>
-    <div class="container py-4">
+    <div class="container-fluid py-6 px-4 px-md-4">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="titulo">
@@ -130,3 +130,8 @@
     </div>
 </body>
 </html>
+<script>
+setInterval(function() {
+    location.reload();
+}, 10000);
+</script>

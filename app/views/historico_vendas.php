@@ -93,7 +93,7 @@ somenteEmpresa();
 
         }
     </style>
-    <title>Histórico de Vendas</title>
+    <title>Histrico de Vendas</title>
 </head>
 
 <body>
@@ -108,7 +108,7 @@ somenteEmpresa();
             <ul class="dropdown-menu dropdown-menu-end">
 
                 <li>
-                    <a class="dropdown-item text-danger" href="index.php?action=home">
+                    <a class="dropdown-item text-primary" href="index.php?action=home">
                         <i class="bi bi-house"></i> Home
                     </a>
                 </li>
@@ -120,7 +120,7 @@ somenteEmpresa();
         <h3 class="m-3 text-center">Sistema</h3>
         <hr>
 
-        <h5 class="m-2">Histórico de Vendas</h5>
+        <h5 class="m-2">Histrico de Vendas</h5>
 
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
@@ -157,8 +157,17 @@ somenteEmpresa();
                                     <ul class="mt-2">
                                         <?php foreach ($venda['itens'] as $item): ?>
                                             <li>
-                                                <?= $item['nome'] ?>
-                                                - <?= $item['quantidade'] ?>x
+                                                <?= $item['nome'] ?> -
+                                                <?php if (($item['unidade_medida'] ?? 'UN') === 'KG'): ?>
+
+                                                    <?= number_format($item['quantidade'], 3, ',', '.') ?> KG
+
+                                                <?php else: ?>
+
+                                                    <?= number_format($item['quantidade'], 2, ',', '.') ?> un
+
+                                                <?php endif; ?>
+
                                                 - R$ <?= number_format($item['preco'], 2, ',', '.') ?>
                                             </li>
                                         <?php endforeach; ?>

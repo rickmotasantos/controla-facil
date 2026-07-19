@@ -3,6 +3,7 @@ header('Content-Type: text/html; charset=UTF-8');
 session_start();
 
 define('BASE_PATH', dirname(__DIR__));
+// define('BASE_PATH', __DIR__);
 
 require_once BASE_PATH . '/app/controllers/ProdutoController.php';
 require_once BASE_PATH . '/app/controllers/VendaController.php';

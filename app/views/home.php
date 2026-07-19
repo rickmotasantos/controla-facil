@@ -44,16 +44,24 @@
                     <h4 class="fw-bold text-primary">ControlaFácil</h4>
                     <small class="text-muted"> Seu estoque na palma da mão</small>
                 </div>
-                <div>
-                    <a href="index.php?action=logout"
-                        class="btn btn-light rounded-circle shadow-sm"
-                        style="width:40px; height:40px;"
-                        onclick="return confirm('Deseja sair?')">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div>
+                        <a class="dropdown-item" href="index.php?action=alterar_senha" title="Alterar Senha" class="btn btn-light rounded-circle shadow-sm">
+                            <i class="bi bi-person-lock"></i> alterar senha
+                        </a>
+                    </div>
+                    <div>
+                        <a href="index.php?action=logout"
+                            class="btn btn-light rounded-circle shadow-sm"
+                            style="width:40px; height:40px;"
+                            onclick="return confirm('Deseja sair?')">
 
-                        <i class="bi bi-power"></i>
+                            <i class="bi bi-power"></i>
 
-                    </a>
+                        </a>
+                    </div>
                 </div>
+
             </div>
             <?php if ($_SESSION['tipo'] != 'funcionario'): ?>
                 <div class="col-6">

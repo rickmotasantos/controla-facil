@@ -10,13 +10,14 @@ class ProdutoController
         $pdo = conectarBanco();
 
         $nome = $_POST['nome'] ?? '';
-        $preco = $_POST['preco'];
-        $quantidade = $_POST['quantidade'];
+        $preco = (float) str_replace(',', '.', $_POST['preco']);
+        $quantidade = (float) str_replace(',', '.', $_POST['quantidade']);
         $codigo = $_POST['codigo'];
         $empresa_id = $_SESSION['empresa_id'];
+        $unidade_medida = $_POST['unidade_medida'] ?? 'UN';
 
         $produtoModel = new Produto($pdo);
-        $produtoModel->criar($nome, $preco, $quantidade, $codigo, $empresa_id);
+        $produtoModel->criar($nome, $preco, $quantidade, $codigo, $empresa_id, $unidade_medida);
         $_SESSION['msg'] = "Produto criado com sucesso!";
         $_SESSION['msg_tipo'] = "success";
 
@@ -57,14 +58,15 @@ class ProdutoController
 
         $id = $_POST['id'];
         $nome = $_POST['nome'] ?? '';
-        $preco = $_POST['preco'];
+        $preco = (float) str_replace(',', '.', $_POST['preco']);
         $quantidade = $_POST['quantidade'];
         $codigo = $_POST['codigo'];
         $empresa_id = $_SESSION['empresa_id'];
         $tipo = $_SESSION['tipo'];
+        $unidade_medida = $_POST['unidade_medida'] ?? 'UN';
 
         $produto = new Produto($pdo);
-        $produto->atualizar($id, $nome, $preco, $quantidade, $codigo, $empresa_id, $tipo);
+        $produto->atualizar($id, $nome, $preco, $quantidade, $codigo, $empresa_id, $tipo, $unidade_medida);
 
         header("Location: index.php?action=produtos");
         exit;
@@ -90,9 +92,10 @@ class ProdutoController
         $pdo = conectarBanco();
 
         $codigo = trim($_POST['codigo']);
-        $quantidade = (int) $_POST['quantidade'];
+        $quantidade = (float) str_replace(',', '.', $_POST['quantidade']);
         $empresa_id = $_SESSION['empresa_id'];
         $tipo = $_SESSION['tipo'];
+        
 
         if ($tipo === 'admin') {
             $stmt = $pdo->prepare("
@@ -184,7 +187,7 @@ class ProdutoController
             $pdo = conectarBanco();
 
             $produto_id = $_POST['produto_id'];
-            $quantidade = $_POST['quantidade'];
+            $quantidade = (float) str_replace(',', '.', $_POST['quantidade']);
 
             $model = new Produto($pdo);
             $model->somarEstoque($produto_id, $quantidade);

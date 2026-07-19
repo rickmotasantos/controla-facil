@@ -61,7 +61,7 @@ require_once __DIR__ . '/../middlewares/auth.php';
                 <?php else: ?>
 
                     <li>
-                        <a class="dropdown-item" href="index.php?action=home">
+                        <a class="dropdown-item text-primary" href="index.php?action=home">
                             <i class="bi bi-house"></i> Home
                         </a>
                     </li>
@@ -82,8 +82,8 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
         <hr>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="m-2">Nova Venda</h5>
+        <div class="d-flex justify-content-between align-items-center mb-0">
+            <h5 class="m-0">Nova Venda</h5>
             <?php if ($_SESSION['tipo'] === 'empresa'): ?>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalEntradaProduto">
                     <i class="bi bi-plus-circle"></i> Dar entrada
@@ -111,13 +111,13 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
                                 <div id="resultado_busca_entrada"
                                     class="list-group mt-2 shadow position-absolute w-100"
-                                    style="z-index:999;">
+                                    style="z-index: 1050;;">
                                 </div>
                             </div>
 
                             <div class="mb-3 ">
                                 <label for="form-control">Quantidade</label>
-                                <input type="number" class="form-control" name="quantidade" min="1" required>
+                                <input type="number" id="quantidade_entrada" class="form-control" name="quantidade" min="0.001" step="0.001" required>
                             </div>
 
                             <div class="modal-footer">
@@ -147,11 +147,13 @@ require_once __DIR__ . '/../middlewares/auth.php';
             <div class="col-12 col-md-5 position-relative">
                 <input type="text" id="busca_produto" class="form-control" placeholder="Digite o código ou nome">
 
-                <div id="resultado_busca" class="list-group mt-2 shadow position-absolute w-100"></div>
+                <div id="resultado_busca" class="list-group mt-2 shadow position-absolute w-100" style="z-index:999;"></div>
             </div>
 
             <div class="col-6 col-md-3">
-                <input type="number" name="quantidade" class="form-control" min="1" required>
+                <label id="lblQuantidade"></label>
+                <input type="number" id="quantidade" name="quantidade" class="form-control" min="1" step="1" placeholder="Quantidade" required>
+
             </div>
 
             <div class="col-6 col-md-2">
@@ -180,8 +182,11 @@ require_once __DIR__ . '/../middlewares/auth.php';
                         <div class="fw-semibold">
                             <?= $item['nome'] ?> <br>
                             <div class="text-muted">
-                                Qtd: <?= $item['quantidade'] ?> |
-                                R$ <?= number_format($subtotal, 2, ',', '.') ?>
+                                <?php
+                                $unidade = $item['unidade_medida'] == 'KG' ? 'kg' : 'un';
+                                ?>
+
+                                Qtd: <?= number_format($item['quantidade'], $item['unidade_medida'] == 'KG' ? 3 : 0, ',', '.') . ' ' . $unidade ?>
                             </div>
 
                         </div>
@@ -266,6 +271,28 @@ require_once __DIR__ . '/../middlewares/auth.php';
                     item.innerText = p.codigo + ' - ' + p.nome + ' - R$ ' + p.preco;
 
                     item.addEventListener('click', function() {
+
+                        console.log(p);
+
+                        const lbl = document.getElementById('lblQuantidade');
+                        const qtd = document.getElementById('quantidade');
+
+                        if (p.unidade_medida === "KG") {
+
+                            lbl.innerText = "Peso (kg)";
+                            qtd.value = "";
+                            qtd.step = p.unidade_medida === "KG" ? "0.001" : "1";
+                            qtd.min = p.unidade_medida === "KG" ? "0.001" : "1";
+                            qtd.placeholder = "Ex.: 0.350";
+
+                        } else {
+
+                            lbl.innerText = "Quantidade";
+                            qtd.step = "1";
+                            qtd.min = "1";
+                            qtd.placeholder = "Ex.: 2";
+
+                        }
                         console.log("Clicou no produto:", p.id);
 
                         produtoId.value = p.id;

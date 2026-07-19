@@ -62,7 +62,7 @@ somenteEmpresa();
             <ul class="dropdown-menu dropdown-menu-end">
 
                 <li>
-                    <a class="dropdown-item text-danger" href="index.php?action=home">
+                    <a class="dropdown-item text-primary" href="index.php?action=home">
                         <i class="bi bi-house"></i> Home
                     </a>
                 </li>

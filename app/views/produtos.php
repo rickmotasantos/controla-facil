@@ -39,6 +39,7 @@ somenteEmpresa();
         }
     </style>
 </head>
+
 <body>
     <div class="topbar d-flex justify-content-between align-items-center px-3 text-white">
         <strong><i class="bi bi-box"></i> Estoque</strong>
@@ -51,17 +52,11 @@ somenteEmpresa();
             <ul class="dropdown-menu dropdown-menu-end">
 
                 <li>
-                    <a class="dropdown-item" href="index.php?action=alterar_senha">
-                        <i class="bi bi-key"></i> Alterar senha
-                    </a>
-                </li>
-
-                <li>
                     <hr class="dropdown-divider">
                 </li>
 
                 <li>
-                    <a class="dropdown-item" href="index.php?action=home">
+                    <a class="dropdown-item text-primary" href="index.php?action=home">
                         <i class="bi bi-house"></i> Home
                     </a>
                 </li>
@@ -145,7 +140,14 @@ somenteEmpresa();
                                 <td data-label="Código"><?= htmlspecialchars($p['codigo']) ?></td>
                                 <td data-label="Nome"><?= htmlspecialchars($p['nome']) ?></td>
                                 <td data-label="Preço">R$ <?= htmlspecialchars(number_format($p['preco'], 2, ',', '.')) ?></td>
-                                <td data-label="Qtd"><?= htmlspecialchars($p['quantidade']) ?></td>
+                                <td data-label="Qtd">                          <?php
+                                    if ($p['unidade_medida'] === 'UN') {
+                                        echo number_format($p['quantidade'], 0, ',', '.') . ' un';
+                                    } else {
+                                        echo number_format($p['quantidade'], 3, ',', '.') . ' kg';
+                                    }
+                                    ?>
+                                </td>
                                 <td data-label="Itens" class="text-center">
                                     <a href="index.php?action=editar&id=<?= $p['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
                                     <a href="index.php?action=excluir&id=<?= $p['id'] ?>"
@@ -163,6 +165,7 @@ somenteEmpresa();
 
     </div>
 </body>
+
 </html>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
 </script>

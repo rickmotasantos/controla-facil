@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../models/Produto.php';
 require_once __DIR__ . "/../../config/Database.php";
 require_once __DIR__ . "/../models/Venda.php";
+require_once __DIR__ . "/../models/Empresa.php";
 
 class VendaController
 {
@@ -11,7 +12,7 @@ class VendaController
         $pdo = conectarBanco();
 
         $produto_id = $_POST['produto_id'] ?? null;
-        $quantidade = (int)$_POST['quantidade'];
+        $quantidade = (float) str_replace(',', '.', $_POST['quantidade']);
         $empresa_id = $_SESSION['empresa_id'];
         $forma_pagamento = $_POST['forma_pagamento'] ?? '';
 
@@ -55,7 +56,7 @@ class VendaController
         $venda = new Venda($pdo);
 
         $venda_id = $venda->criarVenda($total, $forma_pagamento, $empresa_id);
-        $venda->adicionarItem($venda_id, $produto_id, $quantidade, $preco, $empresa_id);
+        $venda->adicionarItem($venda_id, $produto_id, $quantidade, $preco, $empresa_id,);
         $venda->baixarEstoque($produto_id, $quantidade, $empresa_id);
 
         header("Location: index.php");
@@ -90,7 +91,8 @@ class VendaController
                 $vendas[$id]['itens'][] = [
                     'nome' => $row['produto_nome'],
                     'quantidade' => $row['quantidade'],
-                    'preco' => $row['preco']
+                    'preco' => $row['preco'],
+                    'unidade_medida' => $row['unidade_medida']
                 ];
             }
         }
@@ -136,7 +138,7 @@ class VendaController
         $pdo = conectarBanco();
 
         $produto_id = $_POST['produto_id'];
-        $quantidade = (int) $_POST['quantidade'];
+        $quantidade = (float) str_replace(',', '.', $_POST['quantidade']);
         $empresa_id = $_SESSION['empresa_id'];
         $forma_pagamento = $_POST['forma_pagamento'] ?? '';
 
@@ -179,7 +181,8 @@ class VendaController
             'id' => $produto['id'],
             'nome' => $produto['nome'],
             'preco' => $produto['preco'],
-            'quantidade' => $quantidade
+            'quantidade' => $quantidade,
+            'unidade_medida' => $produto['unidade_medida']
         ];
 
         foreach ($_SESSION['carrinho'] ?? [] as &$c) {
@@ -272,13 +275,13 @@ class VendaController
                     );
                 }
 
-                if ($produto['quantidade'] <= 0) {
+                if ((float)$produto['quantidade'] < (float)$item['quantidade']) {
                     throw new Exception(
                         "Produto sem estoque: " . $item['nome']
                     );
                 }
 
-                if ($produto['quantidade'] < $item['quantidade']) {
+                if ((float)$produto['quantidade'] < (float)$item['quantidade']) {
                     throw new Exception(
                         "Estoque insuficiente para: " . $item['nome']
                     );
@@ -399,7 +402,8 @@ class VendaController
         v.data,
         iv.quantidade,
         iv.preco,
-        p.nome
+        p.nome,
+        p.unidade_medida
         FROM vendas v
         INNER JOIN itens_venda iv
         ON iv.venda_id = v.id
@@ -414,6 +418,8 @@ class VendaController
         ]);
 
         $itens = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $empresaModel = new Empresa($pdo);
+        $empresa = $empresaModel->buscaPorId($empresa_id);
 
         require  __DIR__ . '/../views/imprimir_nota.php';
     }

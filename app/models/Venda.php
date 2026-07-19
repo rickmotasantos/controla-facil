@@ -116,7 +116,8 @@ class Venda
             i.quantidade,
             i.preco,
 
-            p.nome AS produto_nome
+            p.nome AS produto_nome,
+            p.unidade_medida
 
         FROM vendas v
         LEFT JOIN itens_venda i ON i.venda_id = v.id
