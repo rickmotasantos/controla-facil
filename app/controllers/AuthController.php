@@ -89,7 +89,7 @@ class AuthController
 
         $acesso_id = $_SESSION['acesso_id'] ?? null;
 
-        if($acesso_id) {
+        if ($acesso_id) {
             $stmt = $pdo->prepare("
             UPDATE acessos
             SET logout_em = NOW(),
@@ -235,6 +235,184 @@ class AuthController
         $_SESSION['msg_tipo'] = "success";
 
         header("Location: index.php?action=home");
+        exit;
+    }
+
+    public function listarFuncionarios()
+    {
+        $pdo = conectarBanco();
+
+        $empresa_id = $_SESSION['empresa_id'];
+
+        $stmt = $pdo->prepare("
+        SELECT id, nome, empresa_id, tipo
+        FROM usuarios
+        WHERE empresa_id = ?
+        AND tipo = 'funcionario'
+        ORDER BY nome ASC
+    ");
+
+        $stmt->execute([$empresa_id]);
+
+        $funcionarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        require __DIR__ . '/../views/funcionarios.php';
+    }
+
+    public function atualizarFuncionario()
+    {
+        $pdo = conectarBanco();
+
+        $id = $_POST['id'] ?? null;
+        $nome = trim($_POST['nome'] ?? '');
+        $senha = $_POST['senha'] ?? '';
+        $empresa_id = $_SESSION['empresa_id'];
+
+        if (!$id || empty($nome)) {
+            $_SESSION['msg'] = "Dados inválidos.";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=funcionarios");
+            exit;
+        }
+
+        // Se a senha foi preenchida, atualiza nome e senha
+        if (!empty($senha)) {
+
+            $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+
+            $stmt = $pdo->prepare("
+            UPDATE usuarios
+            SET nome = ?, senha = ?
+            WHERE id = ?
+            AND empresa_id = ?
+            AND tipo = 'funcionario'
+        ");
+
+            $stmt->execute([
+                $nome,
+                $senhaHash,
+                $id,
+                $empresa_id
+            ]);
+        } else {
+
+            // Se não informou senha, mantém a senha atual
+            $stmt = $pdo->prepare("
+            UPDATE usuarios
+            SET nome = ?
+            WHERE id = ?
+            AND empresa_id = ?
+            AND tipo = 'funcionario'
+        ");
+
+            $stmt->execute([
+                $nome,
+                $id,
+                $empresa_id
+            ]);
+        }
+
+        $_SESSION['msg'] = "Funcionário atualizado com sucesso!";
+        $_SESSION['msg_tipo'] = "success";
+
+        header("Location: index.php?action=funcionarios");
+        exit;
+    }
+    
+    public function buscarFuncionarioPorId()
+    {
+        $pdo = conectarBanco();
+
+        $empresa_id = $_SESSION['empresa_id'];
+
+        $stmt = $pdo->prepare("
+            SELECT id, nome, empresa_id, tipo
+            FROM usuarios
+            WHERE id = ?
+            AND empresa_id = ?
+            AND tipo = 'funcionario'
+        ");
+
+        $stmt->execute([$empresa_id]);
+
+        $funcionarios =  $stmt->fetch(PDO::FETCH_ASSOC);
+
+        require __DIR__ . '/../views/funcionarios.php';
+    }
+
+    public function editarFuncionario()
+    {
+        $pdo = conectarBanco();
+
+        $id = $_GET['id'] ?? null;
+        $empresa_id = $_SESSION['empresa_id'];
+
+        if (!$id) {
+            $_SESSION['msg'] = "Funcionário não encontrado.";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=funcionarios");
+            exit;
+        }
+
+        $stmt = $pdo->prepare("
+        SELECT id, nome
+        FROM usuarios
+        WHERE id = ?
+        AND empresa_id = ?
+        AND tipo = 'funcionario'
+    ");
+
+        $stmt->execute([
+            $id,
+            $empresa_id
+        ]);
+
+        $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$funcionario) {
+            $_SESSION['msg'] = "Funcionário não encontrado.";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=funcionarios");
+            exit;
+        }
+
+        require __DIR__ . '/../views/editar_funcionario.php';
+    }
+
+    public function excluirFuncionario()
+    {
+        $pdo = conectarBanco();
+
+        $id = $_GET['id'] ?? null;
+        $empresa_id = $_SESSION['empresa_id'];
+
+        if (!$id) {
+            $_SESSION['msg'] = "Funcionário não encontrado.";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=funcionarios");
+            exit;
+        }
+
+        $stmt = $pdo->prepare("
+        DELETE FROM usuarios
+        WHERE id = ?
+        AND empresa_id = ?
+        AND tipo = 'funcionario'
+    ");
+
+        $stmt->execute([
+            $id,
+            $empresa_id
+        ]);
+
+        $_SESSION['msg'] = "Funcionário excluído com sucesso!";
+        $_SESSION['msg_tipo'] = "success";
+
+        header("Location: index.php?action=funcionarios");
         exit;
     }
 }

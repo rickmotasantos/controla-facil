@@ -77,6 +77,7 @@ somenteEmpresa();
         endif; ?>
 
         <h5 class="mb-3">Lista de Produtos</h5>
+
         <div class="card shadow-sm mb-3">
             <div class="card-body">
 
@@ -103,8 +104,22 @@ somenteEmpresa();
 
             </div>
         </div>
+
         <div class="table-responsive m-2">
-            <table class="table table-light table-striped table-hover table-bordered text-center">
+
+            <div class="border border-2 rounded shadow-sm p-3 mb-3">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+
+                    <input type="text" class="form-control" id="pesquisaProduto" placeholder="Digite o código ou nome do produto" autocomplete="off" autofocus>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center align-items-center m-2 ">
+                <span class="input-group-text" id="totalProdutos">Total itens cadastrados: <?= Count($produtos ?? []); ?></span>
+            </div>
+
+            <table class="table table-light table-striped table-hover table-bordered text-center mt-3">
 
                 <thead class="table-dark">
                     <tr>
@@ -116,7 +131,7 @@ somenteEmpresa();
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="listaProdutos">
 
                     <?php if (empty($produtos ?? [])): ?>
                         <tr>
@@ -140,13 +155,13 @@ somenteEmpresa();
                                 <td data-label="Código"><?= htmlspecialchars($p['codigo']) ?></td>
                                 <td data-label="Nome"><?= htmlspecialchars($p['nome']) ?></td>
                                 <td data-label="Preço">R$ <?= htmlspecialchars(number_format($p['preco'], 2, ',', '.')) ?></td>
-                                <td data-label="Qtd">                          <?php
-                                    if ($p['unidade_medida'] === 'UN') {
-                                        echo number_format($p['quantidade'], 0, ',', '.') . ' un';
-                                    } else {
-                                        echo number_format($p['quantidade'], 3, ',', '.') . ' kg';
-                                    }
-                                    ?>
+                                <td data-label="Qtd"> <?php
+                                                        if ($p['unidade_medida'] === 'UN') {
+                                                            echo number_format($p['quantidade'], 0, ',', '.') . ' un';
+                                                        } else {
+                                                            echo number_format($p['quantidade'], 3, ',', '.') . ' kg';
+                                                        }
+                                                        ?>
                                 </td>
                                 <td data-label="Itens" class="text-center">
                                     <a href="index.php?action=editar&id=<?= $p['id'] ?>" class="btn btn-warning btn-sm">Editar</a>
@@ -174,4 +189,34 @@ somenteEmpresa();
         const alert = document.querySelector('.alert');
         if (alert) alert.remove();
     }, 3000);
+</script>
+<script>
+    const pesquisaProduto = document.getElementById('pesquisaProduto');
+    const listaProdutos = document.getElementById('listaProdutos');
+    const totalProdutos = document.getElementById('totalProdutos');
+
+    pesquisaProduto.addEventListener('input', function() {
+        const termo = this.value.toLowerCase().trim();
+        const linhas = listaProdutos.querySelectorAll('tr');
+
+        let totalEncontrados = 0;
+
+        linhas.forEach(function(linha) {
+
+            if (!linha.cells.length) {
+                return;
+            }
+
+            const codigo = linha.cells[0].textContent.toLowerCase();
+            const nome = linha.cells[1].textContent.toLowerCase();
+
+            if (codigo.includes(termo) || nome.includes(termo)) {
+                linha.style.display = '';
+                totalEncontrados++;
+            } else {
+                linha.style.display = 'none';
+            }
+        });
+        totalProdutos.textContent = 'Total itens encontrados: ' + totalEncontrados;
+    });
 </script>

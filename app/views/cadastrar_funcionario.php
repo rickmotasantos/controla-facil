@@ -15,7 +15,7 @@
         <div class="card shadow p-4">
             <h3 class="mb-4">Cadastrar Funcionário</h3>
 
-            <form method="post" action="index.php?action=salvar_funcionário">
+            <form method="post" action="index.php?action=salvar_funcionario">
                 <div class="mb-3">
                     <label for="Nome">Nome</label>
                     <input type="text" name="nome" class="form-control" required>

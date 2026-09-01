@@ -30,12 +30,21 @@ class AdminController
     public function salvarEmpresa()
     {
         $pdo = conectarBanco();
+        
+        $razao_social = $_POST['razao_social'] ?? '';
+        $documento = $_POST['documento'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $responsavel = $_POST['responsavel'] ?? '';
+        $telefone = $_POST['telefone'] ?? '';
+        $nome_fantasia = $_POST['nome_fantasia'] ?? '';
+        $nome = !empty($nome_fantasia) ? $nome_fantasia : $razao_social;
+        $ramo_atividade = $_POST['ramo_atividade'] ?? '';
+        $endereco = $_POST['endereco'] ?? '';
+        $cep = $_POST['cep'] ?? '';
 
-        $nome = $_POST['nome'];
-        $responsavel = $_POST['responsavel'];
-        $telefone = $_POST['telefone'];
-        $plano = $_POST['plano'];
-        $status = $_POST['status'];
+
+        $plano = $_POST['plano'] ?? '';
+        $status = $_POST['status'] ?? '';
 
         $valor_mensal = !empty($_POST['valor_mensal'])
             ? $_POST['valor_mensal']
@@ -46,14 +55,45 @@ class AdminController
             : null;
 
         $sql = "INSERT INTO empresas
-    (nome, responsavel, telefone, plano, valor_mensal, vencimento_dia, status)
+    (nome, 
+    razao_social, 
+    documento, 
+    email, 
+    nome_fantasia, 
+    ramo_atividade, 
+    endereco, 
+    cep,
+    responsavel, 
+    telefone, 
+    plano, 
+    valor_mensal, 
+    vencimento_dia, status)
     VALUES
-    (:nome, :responsavel, :telefone, :plano, :valor_mensal, :vencimento_dia, :status)";
+    (:nome, 
+    :razao_social, 
+    :documento, 
+    :email, 
+    :nome_fantasia, 
+    :ramo_atividade, 
+    :endereco, 
+    :cep, 
+    :responsavel, 
+    :telefone, 
+    :plano, 
+    :valor_mensal, 
+    :vencimento_dia, :status)";
 
         $stmt = $pdo->prepare($sql);
 
         $stmt->execute([
             ':nome' => $nome,
+            ':razao_social' => $razao_social,
+            ':documento' => $documento,
+            ':email' => $email,
+            ':nome_fantasia' => $nome_fantasia,
+            ':ramo_atividade' => $ramo_atividade,
+            ':endereco' => $endereco,
+            ':cep' => $cep,
             ':responsavel' => $responsavel,
             ':telefone' => $telefone,
             ':plano' => $plano,
@@ -155,6 +195,13 @@ class AdminController
 
         $sql = "UPDATE empresas SET
         nome = :nome,
+        razao_social = :razao_social,
+        documento = :documento,
+        email = :email,
+        nome_fantasia = :nome_fantasia,
+        ramo_atividade = :ramo_atividade,
+        endereco = :endereco,
+        cep = :cep,
         responsavel = :responsavel,
         telefone = :telefone,
         plano = :plano,
@@ -167,7 +214,16 @@ class AdminController
 
         $stmt->execute([
             ':id' => $_POST['id'],
-            ':nome' => $_POST['nome'],
+            ':nome' => !empty($_POST['nome_fantasia'])
+                ? $_POST['nome_fantasia']
+                : $_POST['nome'],
+            ':razao_social' => $_POST['razao_social'],
+            ':documento' => $_POST['documento'],
+            ':email' => $_POST['email'],
+            ':nome_fantasia' => $_POST['nome_fantasia'],
+            ':ramo_atividade' => $_POST['ramo_atividade'],
+            ':endereco' => $_POST['endereco'],
+            ':cep' => $_POST['cep'],
             ':responsavel' => $_POST['responsavel'],
             ':telefone' => $_POST['telefone'],
             ':plano' => $_POST['plano'],

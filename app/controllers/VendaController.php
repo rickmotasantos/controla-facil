@@ -9,6 +9,7 @@ class VendaController
 
     public function salvar()
     {
+
         $pdo = conectarBanco();
 
         $produto_id = $_POST['produto_id'] ?? null;
@@ -16,49 +17,42 @@ class VendaController
         $empresa_id = $_SESSION['empresa_id'];
         $forma_pagamento = $_POST['forma_pagamento'] ?? '';
 
-        $stmt = $pdo->prepare("SELECT * FROM produtos WHERE id = ? AND empresa_id = ?");
+        $stmt = $pdo->prepare(" SELECT * FROM produtos WHERE id = ? AND empresa_id = ? ");
         $stmt->execute([$produto_id, $empresa_id]);
         $produto = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$produto_id) {
             $_SESSION['msg'] = "Produto inválido!";
             $_SESSION['msg_tipo'] = "danger";
-
             header("Location: index.php?action=vendas");
             exit;
         }
-
         if ($quantidade <= 0) {
             $_SESSION['msg'] = "Quantidade inválida!";
             $_SESSION['msg_tipo'] = "danger";
-
             header("Location: index.php?action=vendas");
             exit;
         }
-
         if (!$produto) {
             $_SESSION['msg'] = "Produto não encontrado";
             $_SESSION['msg_tipo'] = "danger";
             header("Location: index.php?action=vendas");
             exit;
         }
-
-        if ($produto['quantidade'] < $quantidade) {
+        if ((float) $produto['quantidade'] < $quantidade) {
             $_SESSION['msg'] = "Estoque insuficiente";
             $_SESSION['msg_tipo'] = "danger";
             header("Location: index.php?action=vendas");
             exit;
         }
-
-        $preco = $produto['preco'];
+        $preco = (float) $produto['preco'];
         $total = $preco * $quantidade;
-
+        $usuario_id = $_SESSION['usuario_id'];
+        $caixa_id = 1;
         $venda = new Venda($pdo);
-
-        $venda_id = $venda->criarVenda($total, $forma_pagamento, $empresa_id);
-        $venda->adicionarItem($venda_id, $produto_id, $quantidade, $preco, $empresa_id,);
+        $venda_id = $venda->criarVenda($total, $forma_pagamento, $empresa_id, $usuario_id, $caixa_id);
+        $venda->adicionarItem($venda_id, $produto_id, $quantidade, $preco, $empresa_id);
         $venda->baixarEstoque($produto_id, $quantidade, $empresa_id);
-
         header("Location: index.php");
         exit;
     }
@@ -83,6 +77,8 @@ class VendaController
                     'total' => $row['total'],
                     'forma_pagamento' => $row['forma_pagamento'],
                     'data' => $row['data'],
+                    'usuario_id' => $row['usuario_id'],
+                    'usuario_nome' => $row['usuario_nome'],
                     'itens' => []
                 ];
             }
@@ -129,6 +125,11 @@ class VendaController
         $empresa_id = $_SESSION['empresa_id'];
         $produtoModel = new Produto($pdo);
         $produtos = $produtoModel->listarPorEmpresa($empresa_id);
+
+        $empresaModel = new Empresa($pdo);
+        $empresa = $empresaModel->buscaPorId($empresa_id);
+
+        $imagemFundo = $empresaModel->getImagemFundo($empresa_id);
 
         require __DIR__ . '/../views/vendas.php';
     }
@@ -226,9 +227,11 @@ class VendaController
         $pdo = conectarBanco();
 
         $empresa_id = $_SESSION['empresa_id'];
+        $usuario_id = $_SESSION['usuario_id'];
+        $caixa_id = 1;
+
         $carrinho = $_SESSION['carrinho'] ?? [];
         $forma_pagamento = $_POST['forma_pagamento'] ?? '';
-        $imprimir = isset($_POST['imprimir']);
 
         if (empty($carrinho)) {
 
@@ -270,20 +273,16 @@ class VendaController
                 $produto = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if (!$produto) {
+
                     throw new Exception(
                         "Produto não encontrado: " . $item['nome']
+
                     );
                 }
 
                 if ((float)$produto['quantidade'] < (float)$item['quantidade']) {
                     throw new Exception(
                         "Produto sem estoque: " . $item['nome']
-                    );
-                }
-
-                if ((float)$produto['quantidade'] < (float)$item['quantidade']) {
-                    throw new Exception(
-                        "Estoque insuficiente para: " . $item['nome']
                     );
                 }
 
@@ -294,14 +293,18 @@ class VendaController
             INSERT INTO vendas (
                 total,
                 forma_pagamento,
-                empresa_id
-            ) VALUES (?, ?, ?)
+                empresa_id,
+                usuario_id,
+                caixa_id
+            ) VALUES (?, ?, ?, ?, ?)
         ");
 
             $stmt->execute([
                 $total,
                 $forma_pagamento,
-                $empresa_id
+                $empresa_id,
+                $usuario_id,
+                $caixa_id
             ]);
 
             $venda_id = $pdo->lastInsertId();
@@ -329,14 +332,23 @@ class VendaController
                 $stmt = $pdo->prepare("
                 UPDATE produtos
                 SET quantidade = quantidade - ?
-                WHERE id = ? AND empresa_id = ?
+                WHERE id = ? 
+                    AND empresa_id = ?
+                    AND quantidade >= ?
             ");
 
                 $stmt->execute([
                     $item['quantidade'],
                     $item['id'],
-                    $empresa_id
+                    $empresa_id,
+                    $item['quantidade']
                 ]);
+
+                if ($stmt->rowCount() === 0) {
+                    throw new Exception(
+                        "Estoque insuficiente para o produto: " . $item['nome']
+                    );
+                }
             }
 
             $pdo->commit();
@@ -346,11 +358,8 @@ class VendaController
             $_SESSION['msg'] = "Venda realizada com sucesso!";
             $_SESSION['msg_tipo'] = "success";
 
-            if($imprimir){
-                header("location: index.php?action=imprimirNota&id=" . $venda_id);
-                exit;
-            }
-
+            header("location: index.php?action=imprimirNota&id=" . $venda_id);
+            exit;
         } catch (Exception $e) {
 
             if ($pdo->inTransaction()) {
@@ -373,6 +382,7 @@ class VendaController
         $empresa_id = $_SESSION['empresa_id'];
 
         $stmt = $pdo->prepare("
+
         SELECT * FROM produtos 
         WHERE empresa_id = ?
         AND (nome LIKE ? OR codigo LIKE ?)
@@ -387,7 +397,8 @@ class VendaController
         exit;
     }
 
-    public function imprimirNota(){
+    public function imprimirNota()
+    {
         $pdo = conectarBanco();
 
         $venda_id = $_GET['id'] ?? null;
@@ -422,5 +433,351 @@ class VendaController
         $empresa = $empresaModel->buscaPorId($empresa_id);
 
         require  __DIR__ . '/../views/imprimir_nota.php';
+    }
+
+    public function historico_fechamento_caixa()
+    {
+        $pdo = conectarBanco();
+
+        $empresa_id = $_SESSION['empresa_id'];
+
+        $caixa_id = 1;
+
+        $vendaModel = new Venda($pdo);
+
+
+        $fechamento = $vendaModel->resumoCaixa(
+            $empresa_id,
+            $caixa_id
+        );
+
+        $totalDinheiro = 0;
+        $totalCartao = 0;
+        $totalPix = 0;
+        $totalGeral = 0;
+
+        foreach ($fechamento as $item) {
+
+            $forma = strtolower(
+                trim($item['forma_pagamento'] ?? '')
+            );
+
+            $valor = (float) ($item['total'] ?? 0);
+
+            $totalGeral += $valor;
+
+            if ($forma === 'dinheiro') {
+                $totalDinheiro += $valor;
+            }
+
+            if (
+                $forma === 'cartao' ||
+                $forma === 'cartão'
+            ) {
+                $totalCartao += $valor;
+            }
+
+            if ($forma === 'pix') {
+                $totalPix += $valor;
+            }
+        }
+
+        $funcionarios = $vendaModel->listarFuncionariosDoCaixa(
+            $empresa_id,
+            $caixa_id
+        );
+
+        foreach ($funcionarios as &$funcionario) {
+
+            $usuario_id = $funcionario['id'];
+
+            $funcionario['fechamento'] = str_pad(
+                (string) $caixa_id,
+                3,
+                '0',
+                STR_PAD_LEFT
+            );
+
+            $funcionario['dinheiro'] = 0;
+            $funcionario['cartao'] = 0;
+            $funcionario['pix'] = 0;
+            $funcionario['total'] = 0;
+
+
+            $pagamentos = $vendaModel->totaisFuncionarios(
+                $empresa_id,
+                $caixa_id,
+                $usuario_id
+            );
+
+            foreach ($pagamentos as $pagamento) {
+
+                $forma = strtolower(
+                    trim($pagamento['forma_pagamento'] ?? '')
+                );
+
+                $valor = (float) ($pagamento['total'] ?? 0);
+
+                $funcionario['total'] += $valor;
+
+                if ($forma === 'dinheiro') {
+                    $funcionario['dinheiro'] += $valor;
+                }
+
+                if (
+                    $forma === 'cartao' ||
+                    $forma === 'cartão'
+                ) {
+                    $funcionario['cartao'] += $valor;
+                }
+
+                if ($forma === 'pix') {
+                    $funcionario['pix'] += $valor;
+                }
+            }
+
+            $funcionario['produtos'] =
+                $vendaModel->produtosVendidosFuncionario(
+                    $empresa_id,
+                    $caixa_id,
+                    $usuario_id
+                );
+
+            $quantidadeMercadorias =
+                $vendaModel->quantidadeMercadoriasVendidas(
+                    $empresa_id,
+                    $caixa_id,
+                    $usuario_id
+                );
+
+            $funcionario['quantidade_mercadoria'] =
+                (float) ($quantidadeMercadorias['quantidade'] ?? 0);
+        }
+
+        unset($funcionario);
+
+        require __DIR__ . '/../views/historico_fechamento_caixa.php';
+    }
+
+    public function imprimirFechamento()
+    {
+        $pdo = conectarBanco();
+
+        $empresa_id = $_SESSION['empresa_id'];
+        $caixa_id = 1;
+
+        $usuario_id = $_GET['usuario_id'] ?? null;
+
+        if (!$usuario_id) {
+            die('Funcionário não informado.');
+        }
+
+        $vendaModel = new Venda($pdo);
+
+        $funcionarios = $vendaModel->listarFuncionariosDoCaixa(
+            $empresa_id,
+            $caixa_id
+        );
+
+        $funcionario = null;
+
+        foreach ($funcionarios as $item) {
+            if ((int) $item['id'] === (int) $usuario_id) {
+                $funcionario = $item;
+                break;
+            }
+        }
+
+        if (!$funcionario) {
+            die('Funcionário não encontrado.');
+        }
+
+        $funcionario['fechamento'] = str_pad(
+            (string) $caixa_id,
+            3,
+            '0',
+            STR_PAD_LEFT
+        );
+
+
+        $pagamentos = $vendaModel->totaisFuncionarios(
+            $empresa_id,
+            $caixa_id,
+            $usuario_id
+        );
+
+        $funcionario['dinheiro'] = 0;
+        $funcionario['cartao'] = 0;
+        $funcionario['pix'] = 0;
+        $funcionario['total'] = 0;
+
+        foreach ($pagamentos as $pagamento) {
+
+            $forma = strtolower(
+                trim($pagamento['forma_pagamento'] ?? '')
+            );
+
+            $valor = (float) ($pagamento['total'] ?? 0);
+
+            $funcionario['total'] += $valor;
+
+            if ($forma === 'dinheiro') {
+                $funcionario['dinheiro'] += $valor;
+            }
+
+            if ($forma === 'cartao' || $forma === 'cartão') {
+                $funcionario['cartao'] += $valor;
+            }
+
+            if ($forma === 'pix') {
+                $funcionario['pix'] += $valor;
+            }
+        }
+
+
+        $funcionario['produtos'] =
+            $vendaModel->produtosVendidosFuncionario(
+                $empresa_id,
+                $caixa_id,
+                $usuario_id
+            );
+
+
+        $totalVendas = $vendaModel->totalVendasFuncionario(
+            $empresa_id,
+            $caixa_id,
+            $usuario_id
+        );
+
+        $funcionario['total_vendas'] =
+            (int) ($totalVendas['total_vendas'] ?? 0);
+
+        $empresaModel = new Empresa($pdo);
+
+        $empresa = $empresaModel->buscaPorId($empresa_id);
+
+
+        require __DIR__ . '/../views/imprimir_fechamento.php';
+    }
+
+    public function imprimir_relatorio_completo()
+    {
+        $pdo = conectarBanco();
+
+        $empresa_id = $_SESSION['empresa_id'];
+        $caixa_id = 1;
+
+        $vendaModel = new Venda($pdo);
+
+
+        $fechamento = $vendaModel->resumoCaixa(
+            $empresa_id,
+            $caixa_id
+        );
+
+        $totalDinheiro = 0;
+        $totalCartao = 0;
+        $totalPix = 0;
+        $totalGeral = 0;
+
+        foreach ($fechamento as $item) {
+
+            $forma = strtolower(
+                trim($item['forma_pagamento'] ?? '')
+            );
+
+            $valor = (float) ($item['total'] ?? 0);
+
+            $totalGeral += $valor;
+
+            if ($forma === 'dinheiro') {
+                $totalDinheiro += $valor;
+            }
+
+            if ($forma === 'cartao' || $forma === 'cartão') {
+                $totalCartao += $valor;
+            }
+
+            if ($forma === 'pix') {
+                $totalPix += $valor;
+            }
+        }
+
+
+        $funcionarios = $vendaModel->listarFuncionariosDoCaixa(
+            $empresa_id,
+            $caixa_id
+        );
+
+        foreach ($funcionarios as &$funcionario) {
+
+            $usuario_id = $funcionario['id'];
+
+            $funcionario['fechamento'] = str_pad(
+                (string) $caixa_id,
+                3,
+                '0',
+                STR_PAD_LEFT
+            );
+
+            $funcionario['dinheiro'] = 0;
+            $funcionario['cartao'] = 0;
+            $funcionario['pix'] = 0;
+            $funcionario['total'] = 0;
+
+            $pagamentos = $vendaModel->totaisFuncionarios(
+                $empresa_id,
+                $caixa_id,
+                $usuario_id
+            );
+
+            foreach ($pagamentos as $pagamento) {
+
+                $forma = strtolower(
+                    trim($pagamento['forma_pagamento'] ?? '')
+                );
+
+                $valor = (float) ($pagamento['total'] ?? 0);
+
+                $funcionario['total'] += $valor;
+
+                if ($forma === 'dinheiro') {
+                    $funcionario['dinheiro'] += $valor;
+                }
+
+                if ($forma === 'cartao' || $forma === 'cartão') {
+                    $funcionario['cartao'] += $valor;
+                }
+
+                if ($forma === 'pix') {
+                    $funcionario['pix'] += $valor;
+                }
+            }
+
+            $funcionario['produtos'] =
+                $vendaModel->produtosVendidosFuncionario(
+                    $empresa_id,
+                    $caixa_id,
+                    $usuario_id
+                );
+
+            $totalVendas = $vendaModel->totalVendasFuncionario(
+                $empresa_id,
+                $caixa_id,
+                $usuario_id
+            );
+
+            $funcionario['total_vendas'] =
+                (int) ($totalVendas['total_vendas'] ?? 0);
+        }
+
+        unset($funcionario);
+
+        $empresaModel = new Empresa($pdo);
+
+        $empresa = $empresaModel->buscaPorId($empresa_id);
+
+
+        require __DIR__ . '/../views/imprimir_relatorio_completo.php';
     }
 }

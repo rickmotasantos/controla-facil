@@ -126,15 +126,17 @@ somenteEmpresa();
             <table class="table table-bordered table-hover">
                 <thead class="table-dark">
                     <tr>
+                        <th>Atendente</th>
                         <th>Total</th>
                         <th>Pagamento</th>
                         <th>Data</th>
                         <th></th>
                     </tr>
                 </thead>
-                <?php foreach ($vendas as $venda): ?>
-                    <tbody>
+                <tbody>
+                    <?php foreach ($vendas as $venda): ?>
                         <tr>
+                            <td data-label="Atendente"><?= htmlspecialchars($venda['usuario_nome'] ?? 'Não identificado') ?></td>
                             <td data-label="Total">R$ <?= number_format($venda['total'], 2, ',', '.') ?></td>
                             <td data-label="Pagamento"><?= $venda['forma_pagamento'] ?></td>
                             <td data-label="Data"><?= date('d/m/y - H:i:s', strtotime($venda['data'])) ?></td>
@@ -149,7 +151,7 @@ somenteEmpresa();
                         </tr>
 
                         <tr class="collapse" id="venda<?= $venda['id'] ?>">
-                            <td colspan="4">
+                            <td colspan="5">
                                 <strong>Itens da venda:</strong>
 
                                 <?php if (!empty($venda['itens'])): ?>
@@ -179,8 +181,8 @@ somenteEmpresa();
 
                             </td>
                         </tr>
-                    </tbody>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </tbody>
             </table>
         </div>
     </div>

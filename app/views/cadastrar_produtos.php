@@ -78,7 +78,7 @@ somenteEmpresa();
 
                     <div class="mb-3 input-group">
                         <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
-                        <input type="text" name="codigo" class="form-control" placeholder="Código" required>
+                        <input type="text" name="codigo" class="form-control" placeholder="Código" autofocus required>
                     </div>
 
                     <div class="mb-3 input-group">
@@ -93,7 +93,7 @@ somenteEmpresa();
 
                     <div class="mb-3 input-group">
                         <span class="input-group-text"><i class="bi bi-plus"></i></span>
-                        <input type="number" name="quantidade" class="form-control" placeholder="Qtd"  step="0.001" min="0.001" required>
+                        <input type="number" name="quantidade" id="quantidade" class="form-control" placeholder="Qtd"  step="0.001" min="0.001" max="999999" required>
                     </div>
 
                     <div class="mb-3 input-group">
@@ -124,4 +124,18 @@ somenteEmpresa();
             alert.remove();
         }
     }, 3000);
+</script>
+<script>
+    const quantidade = document.getElementById('quantidade');
+
+    quantidade.addEventListener('input', function(){
+            this.value = this.value.replace(/[^0-9.]/g, '');
+
+            let valor = this.value;
+
+            if(parseFloat(valor) > 999999){
+                this.value = '';
+                alert('Código de barra não pode ser usado em quantidade');
+            }
+    });
 </script>

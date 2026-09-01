@@ -61,13 +61,12 @@ require_once __DIR__ . '/../middlewares/auth.php';
                 <?php else: ?>
 
                     <li>
-                        <a class="dropdown-item text-primary" href="index.php?action=home">
+                        <a class="dropdown-item text-primary text-center" href="index.php?action=home">
                             <i class="bi bi-house"></i> Home
                         </a>
                     </li>
-
                     <li>
-                        <a class="dropdown-item text-danger" href="index.php?action=logout">
+                        <a class="dropdown-item text-danger text-center" href="index.php?action=logout">
                             <i class="bi bi-box-arrow-right"></i> Sair
                         </a>
                     </li>
@@ -76,6 +75,9 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
             </ul>
         </div>
+    </div>
+    <div class="d-flex justify-content-center align-items-center w-100">
+        <img src="<?= htmlspecialchars($imagemFundo); ?>" class="img-fluid w-100">
     </div>
     <div class="container py-3">
         <h3 class="text-center m-3">Sistema de Comércio</h3>
@@ -140,12 +142,12 @@ require_once __DIR__ . '/../middlewares/auth.php';
             ?>
         <?php endif; ?>
 
-        <form method="post" action="index.php?action=addCarrinho" class="row g-2 align-items-end">
+        <form id="formCarrinho" method="post" action="index.php?action=addCarrinho" class="row g-2 align-items-end">
 
             <input type="hidden" name="produto_id" id="produto_id">
 
             <div class="col-12 col-md-5 position-relative">
-                <input type="text" id="busca_produto" class="form-control" placeholder="Digite o código ou nome">
+                <input type="text" id="busca_produto" class="form-control" placeholder="Digite o código ou nome" autofocus autocomplete="off" required>
 
                 <div id="resultado_busca" class="list-group mt-2 shadow position-absolute w-100" style="z-index:999;"></div>
             </div>
@@ -206,13 +208,19 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
                 <div class="col-12 col-md-3">
 
-                    <select name="forma_pagamento" class="form-control" required>
+                    <select id="forma_pagamento" name="forma_pagamento" class="form-control" required>
                         <option value="">Selecione a forma de pagamento</option>
                         <option value="dinheiro">Dinheiro</option>
                         <option value="cartao">Cartão</option>
                         <option value="pix">Pix</option>
                     </select>
+                </div>
 
+                <div class="col-md-3" id="campo_precisa_troco" style="display:none;">
+                    <select id="precisa_troco" class="form-control">
+                        <option value="nao"> Sem troco</option>
+                        <option value="sim">Precisa de troco</option>
+                    </select>
                 </div>
 
                 <div class="col-md-4" id="campo_dinheiro" style="display:none;">
@@ -246,188 +254,218 @@ require_once __DIR__ . '/../middlewares/auth.php';
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
-            const input = document.getElementById('busca_produto');
-            const resultado = document.getElementById('resultado_busca');
-            const produtoId = document.getElementById('produto_id');
+            // ==========================
+            // BUSCA DE PRODUTOS
+            // ==========================
+            const input = document.getElementById("busca_produto");
+            const resultado = document.getElementById("resultado_busca");
+            const produtoId = document.getElementById("produto_id");
+            const qtd = document.getElementById("quantidade");
+            const formCarrinho = document.getElementById("formCarrinho");
 
-            input.addEventListener('keyup', async function() {
+            input.addEventListener("keydown", async function(e) {
+
+                if (e.key !== "Enter") return;
+
+                e.preventDefault();
+
+                const busca = input.value;
+
+                const res = await fetch("index.php?action=buscarProduto&busca=" + busca);
+                const produtos = await res.json();
+
+                if (produtos.length === 1) {
+
+                    const p = produtos[0];
+
+                    produtoId.value = p.id;
+                    input.value = p.nome;
+                    resultado.innerHTML = "";
+
+                    if (p.unidade_medida === "KG") {
+
+                        lblQuantidade.innerText = "Peso (Kg)";
+                        qtd.step = "0.001";
+                        qtd.min = "0.001";
+                        qtd.placeholder = "Ex.: 0.350";
+
+                    } else {
+
+                        lblQuantidade.innerText = "Quantidade";
+                        qtd.step = "1";
+                        qtd.min = "1";
+                        qtd.placeholder = "Ex.: 2";
+
+                    }
+
+                    qtd.value = "";
+                    qtd.focus();
+
+                }
+
+            });
+
+            input.addEventListener("keyup", async function() {
 
                 let busca = input.value;
 
                 if (busca.length < 2) {
-                    resultado.innerHTML = '';
-                    return;
-                }
-
-                const res = await fetch('index.php?action=buscarProduto&busca=' + busca);
-                const produtos = await res.json();
-
-                resultado.innerHTML = '';
-
-                produtos.forEach(function(p) {
-
-                    const item = document.createElement('div');
-                    item.className = 'list-group-item list-group-item-action';
-                    item.innerText = p.codigo + ' - ' + p.nome + ' - R$ ' + p.preco;
-
-                    item.addEventListener('click', function() {
-
-                        console.log(p);
-
-                        const lbl = document.getElementById('lblQuantidade');
-                        const qtd = document.getElementById('quantidade');
-
-                        if (p.unidade_medida === "KG") {
-
-                            lbl.innerText = "Peso (kg)";
-                            qtd.value = "";
-                            qtd.step = p.unidade_medida === "KG" ? "0.001" : "1";
-                            qtd.min = p.unidade_medida === "KG" ? "0.001" : "1";
-                            qtd.placeholder = "Ex.: 0.350";
-
-                        } else {
-
-                            lbl.innerText = "Quantidade";
-                            qtd.step = "1";
-                            qtd.min = "1";
-                            qtd.placeholder = "Ex.: 2";
-
-                        }
-                        console.log("Clicou no produto:", p.id);
-
-                        produtoId.value = p.id;
-                        input.value = p.nome;
-                        resultado.innerHTML = '';
-                    });
-
-                    resultado.appendChild(item);
-                });
-            });
-
-        });
-
-        setTimeout(() => {
-            const alert = document.querySelector('.alert');
-            if (alert) alert.remove();
-        }, 3000);
-
-        document.addEventListener("DOMContentLoaded", function() {
-
-            const formaPagamento = document.querySelector('[name="forma_pagamento"]');
-            const campoDinheiro = document.getElementById('campo_dinheiro');
-            const campoTroco = document.getElementById('campo_troco');
-            const inputValor = document.getElementById('valor_recebido');
-            const trocoEl = document.getElementById('troco');
-
-            // MOSTRA / ESCONDE CAMPO
-            formaPagamento.addEventListener('change', function() {
-
-                if (this.value === 'dinheiro') {
-                    campoDinheiro.style.display = 'block';
-                    campoTroco.style.display = 'block';
-                } else {
-                    campoDinheiro.style.display = 'none';
-                    campoTroco.style.display = 'none';
-                }
-            });
-
-            let totalVenda = <?= $total ?? 0 ?>;
-
-            inputValor.addEventListener('input', function() {
-
-                let valor = parseFloat(this.value) || 0;
-                let troco = valor - totalVenda;
-
-                if (valor < totalVenda) {
-                    trocoEl.innerText = "Valor insuficiente";
-                    trocoEl.classList.remove('text-success');
-                    trocoEl.classList.add('text-danger');
-                } else {
-                    trocoEl.innerText = "R$ " + troco.toFixed(2).replace('.', ',');
-                    trocoEl.classList.remove('text-danger');
-                    trocoEl.classList.add('text-success');
-                }
-            });
-
-        });
-
-        setTimeout(() => {
-            const alert = document.querySelector('.alert');
-            if (alert) alert.remove();
-        }, 3000);
-
-        document.addEventListener("DOMContentLoaded", function() {
-
-            const inputEntrada = document.getElementById("busca_produto_entrada");
-            const resultadoEntrada = document.getElementById("resultado_busca_entrada");
-            const produtoIdEntrada = document.getElementById("produto_id_entrada");
-
-            inputEntrada.addEventListener("keyup", async function() {
-
-                let busca = this.value;
-
-                if (busca.length < 2) {
-                    resultadoEntrada.innerHTML = "";
+                    resultado.innerHTML = "";
                     return;
                 }
 
                 const res = await fetch(
-                    "index.php?action=buscarProduto&busca=" + busca
+                    "index.php?action=buscarProduto&busca=" + encodeURIComponent(busca)
                 );
 
                 const produtos = await res.json();
 
-                resultadoEntrada.innerHTML = "";
+                resultado.innerHTML = "";
 
                 produtos.forEach(function(p) {
 
                     const item = document.createElement("div");
 
-                    item.className =
-                        "list-group-item list-group-item-action";
+                    item.className = "list-group-item list-group-item-action";
 
-                    item.innerText =
-                        p.codigo + " - " + p.nome;
+                    item.innerHTML =
+                        p.codigo + " - " + p.nome + " - R$ " + p.preco;
 
-                    item.addEventListener("click", function() {
+                    item.onclick = function() {
 
-                        inputEntrada.value = p.nome;
-                        produtoIdEntrada.value = p.id;
-                        resultadoEntrada.innerHTML = "";
+                        produtoId.value = p.id;
+                        input.value = p.nome;
+                        resultado.innerHTML = "";
 
-                    });
+                        if (p.unidade_medida === "KG") {
 
-                    resultadoEntrada.appendChild(item);
+                            lblQuantidade.innerText = "Peso (Kg)";
+                            qtd.step = "0.001";
+                            qtd.min = "0.001";
+                            qtd.placeholder = "Ex.: 0.350";
+
+                        } else {
+
+                            lblQuantidade.innerText = "Quantidade";
+                            qtd.step = "1";
+                            qtd.min = "1";
+                            qtd.placeholder = "Ex.: 2";
+
+                        }
+
+                        qtd.value = "";
+                        qtd.focus();
+                    };
+
+                    resultado.appendChild(item);
                 });
-
             });
 
-        });
-    </script>
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
+            qtd.addEventListener("keydown", function(e) {
 
-            const formFinalizar = document.getElementById('formFinalizarVenda');
+                if (e.key !== "Enter") return;
 
-            formFinalizar.addEventListener('submit', function(e) {
+                e.preventDefault();
 
-                let confirmar = confirm(
-                    "Deseja imprimir a nota após finalizar a venda?"
-                );
+                if (produtoId.value === "") {
+                    input.focus();
+                    return;
+                }
 
-                if (confirmar) {
+                if (qtd.value === "") {
+                    return;
+                }
 
-                    let input = document.createElement('input');
+                formCarrinho.submit();
+            });
 
-                    input.type = 'hidden';
-                    input.name = 'imprimir';
-                    input.value = '1';
 
-                    formFinalizar.appendChild(input);
+            const formaPagamento = document.getElementById("forma_pagamento");
+            const precisaTroco = document.getElementById("precisa_troco");
+
+            const campoPrecisaTroco = document.getElementById("campo_precisa_troco");
+            const campoDinheiro = document.getElementById("campo_dinheiro");
+            const campoTroco = document.getElementById("campo_troco");
+
+            const valorRecebido = document.getElementById("valor_recebido");
+            const troco = document.getElementById("troco");
+
+            const totalVenda = <?= $total ?>;
+
+            formaPagamento.addEventListener("change", function() {
+
+                if (this.value == "dinheiro") {
+
+                    campoPrecisaTroco.style.display = "block";
+
+                    if (precisaTroco.value == "sim") {
+
+                        campoDinheiro.style.display = "block";
+                        campoTroco.style.display = "block";
+
+                    } else {
+
+                        campoDinheiro.style.display = "none";
+                        campoTroco.style.display = "none";
+
+                    }
+
+                } else {
+
+                    campoPrecisaTroco.style.display = "none";
+                    campoDinheiro.style.display = "none";
+                    campoTroco.style.display = "none";
+
                 }
 
             });
+
+            precisaTroco.addEventListener("change", function() {
+
+                if (this.value == "sim") {
+
+                    campoDinheiro.style.display = "block";
+                    campoTroco.style.display = "block";
+
+                } else {
+
+                    campoDinheiro.style.display = "none";
+                    campoTroco.style.display = "none";
+                    valorRecebido.value = "";
+                    troco.innerHTML = "R$ 0,00";
+
+                }
+
+            });
+
+            valorRecebido.addEventListener("input", function() {
+
+                let recebido = parseFloat(this.value) || 0;
+
+                let valorTroco = recebido - totalVenda;
+
+                if (recebido < totalVenda) {
+
+                    troco.innerHTML = "Valor insuficiente";
+                    troco.classList.remove("text-success");
+                    troco.classList.add("text-danger");
+
+                } else {
+
+                    troco.innerHTML = "R$ " + valorTroco.toFixed(2).replace(".", ",");
+                    troco.classList.remove("text-danger");
+                    troco.classList.add("text-success");
+
+                }
+
+            });
+            setTimeout(function() {
+
+                const alert = document.querySelector(".alert");
+
+                if (alert) alert.remove();
+
+            }, 3000);
 
         });
     </script>

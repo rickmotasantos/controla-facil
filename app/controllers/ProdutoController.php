@@ -16,6 +16,24 @@ class ProdutoController
         $empresa_id = $_SESSION['empresa_id'];
         $unidade_medida = $_POST['unidade_medida'] ?? 'UN';
 
+        if($quantidade <= 0 || $quantidade > 999999){
+            $_SESSION['msg'] = "Quantidade inválida. Digite uma quantidade válida.";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=cadastrar_produto");
+            exit;
+        }
+
+        $quantidade_original = trim($_POST['quantidade'] ?? '');
+
+        if(preg_match('/^\d{8,13}$/', $quantidade_original)){
+            $_SESSION['msg'] = "Você colocou um código de barra no campo de quantidade.";
+            $_SESSION['msg_tipo'] = "danger";
+
+            header("Location: index.php?action=cadastrar_produto");
+            exit;
+        }
+
         $produtoModel = new Produto($pdo);
         $produtoModel->criar($nome, $preco, $quantidade, $codigo, $empresa_id, $unidade_medida);
         $_SESSION['msg'] = "Produto criado com sucesso!";

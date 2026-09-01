@@ -1,9 +1,13 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header('Content-Type: text/html; charset=UTF-8');
 session_start();
 
 define('BASE_PATH', dirname(__DIR__));
-// define('BASE_PATH', __DIR__);
+//define('BASE_PATH', __DIR__);
 
 require_once BASE_PATH . '/app/controllers/ProdutoController.php';
 require_once BASE_PATH . '/app/controllers/VendaController.php';
@@ -154,7 +158,7 @@ switch ($action) {
         break;
 
     case 'produtos':
-        require_once BASE_PATH . '/app/views/produtos.php';
+        (new ProdutoController())->index();
         break;
 
     case 'recuperar_simples':
@@ -169,17 +173,46 @@ switch ($action) {
         (new AuthController())->cadastrarFuncionario();
         break;
 
-    case 'salvar_funcionário':
+    case 'salvar_funcionario':
         (new AuthController())->salvarFuncionario();
         break;
     case 'imprimirNota':
         (new VendaController())->imprimirNota();
         break;
+
+    case 'funcionarios':
+        (new AuthController())->listarFuncionarios();
+        break;
+
+    case 'editar_funcionario':
+        (new AuthController())->editarFuncionario();
+        break;
+
+    case 'atualizar_funcionario':
+        (new AuthController())->atualizarFuncionario();
+        break;
+
+    case 'excluir_funcionario':
+
+        (new AuthController())->excluirFuncionario();
+
+        break;
+    case 'imprimirFechamento':
+        (new VendaController())->imprimirFechamento();
+        break;
+        
+    case 'imprimirRelatorioCompleto':
+        (new VendaController())->imprimir_relatorio_completo();
+        break;
+
     case 'acessos':
         require_once BASE_PATH . '/app/controllers/AcessoController.php';
 
         $controller = new AcessoController();
         $controller->listar();
+        break;
+    case 'historico_fechamento_caixa':
+        (new VendaController())->historico_fechamento_caixa();
         break;
     default:
         (new ProdutoController())->index();
