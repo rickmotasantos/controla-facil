@@ -305,61 +305,61 @@ require_once __DIR__ . '/../middlewares/auth.php';
 
             });
 
-            input.addEventListener("keyup", async function() {
+           input.addEventListener("keyup", async function() {
 
-                let busca = input.value;
+    let busca = input.value;
 
-                if (busca.length < 2) {
-                    resultado.innerHTML = "";
-                    return;
-                }
+    if (busca.length < 2) {
+        resultado.innerHTML = "";
+        return;
+    }
 
-                const res = await fetch(
-                    "index.php?action=buscarProduto&busca=" + encodeURIComponent(busca)
-                );
+    const res = await fetch(
+        "index.php?action=buscarProduto&busca=" + encodeURIComponent(busca)
+    );
 
-                const produtos = await res.json();
+    const produtos = await res.json();
 
-                resultado.innerHTML = "";
+    resultado.innerHTML = "";
 
-                produtos.forEach(function(p) {
+    produtos.forEach(function(p) {
 
-                    const item = document.createElement("div");
+        const item = document.createElement("div");
 
-                    item.className = "list-group-item list-group-item-action";
+        item.className = "list-group-item list-group-item-action";
 
-                    item.innerHTML =
-                        p.codigo + " - " + p.nome + " - R$ " + p.preco;
+        item.innerHTML =
+            p.codigo + " - " + p.nome + " - R$ " + p.preco;
 
-                    item.onclick = function() {
+        item.onclick = function() {
 
-                        produtoId.value = p.id;
-                        input.value = p.nome;
-                        resultado.innerHTML = "";
+            produtoId.value = p.id;
+            input.value = p.nome;
+            resultado.innerHTML = "";
 
-                        if (p.unidade_medida === "KG") {
+            if (p.unidade_medida === "KG") {
 
-                            lblQuantidade.innerText = "Peso (Kg)";
-                            qtd.step = "0.001";
-                            qtd.min = "0.001";
-                            qtd.placeholder = "Ex.: 0.350";
+                lblQuantidade.innerText = "Peso (Kg)";
+                qtd.step = "0.001";
+                qtd.min = "0.001";
+                qtd.placeholder = "Ex.: 0.350";
 
-                        } else {
+            } else {
 
-                            lblQuantidade.innerText = "Quantidade";
-                            qtd.step = "1";
-                            qtd.min = "1";
-                            qtd.placeholder = "Ex.: 2";
+                lblQuantidade.innerText = "Quantidade";
+                qtd.step = "1";
+                qtd.min = "1";
+                qtd.placeholder = "Ex.: 2";
 
-                        }
+            }
 
-                        qtd.value = "";
-                        qtd.focus();
-                    };
+            qtd.value = "";
+            qtd.focus();
+        };
 
-                    resultado.appendChild(item);
-                });
-            });
+        resultado.appendChild(item);
+    });
+});
 
             qtd.addEventListener("keydown", function(e) {
 

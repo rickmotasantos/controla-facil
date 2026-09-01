@@ -154,17 +154,19 @@ class Venda
     public function listarFuncionariosDoCaixa($empresa_id, $caixa_id)
     {
         $stmt = $this->pdo->prepare("
-            SELECT
+        SELECT
             u.id,
             u.nome
-            FROM vendas v
-            INNER JOIN usuarios u
+        FROM vendas v
+        INNER JOIN usuarios u
             ON u.id = v.usuario_id
-            WHERE v.empresa_id = ?
-            AND v.caixa_id = ?
-            GROUP BY u.id, u.nome
-            ORDER BY u.nome
-        ");
+        WHERE v.empresa_id = ?
+        AND v.caixa_id = ?
+        AND v.data >= CURDATE()
+        AND v.data < CURDATE() + INTERVAL 1 DAY
+        GROUP BY u.id, u.nome
+        ORDER BY u.nome
+    ");
 
         $stmt->execute([
             $empresa_id,
@@ -174,18 +176,21 @@ class Venda
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
     public function totaisFuncionarios($empresa_id, $caixa_id, $usuario_id)
     {
         $stmt = $this->pdo->prepare("
-            SELECT 
+        SELECT 
             forma_pagamento,
             SUM(total) AS total
-            FROM vendas
-            WHERE empresa_id = ?
-            AND caixa_id = ?
-            AND usuario_id = ?
-            GROUP BY forma_pagamento
-        ");
+        FROM vendas
+        WHERE empresa_id = ?
+        AND caixa_id = ?
+        AND usuario_id = ?
+        AND data >= CURDATE()
+        AND data < CURDATE() + INTERVAL 1 DAY
+        GROUP BY forma_pagamento
+    ");
 
         $stmt->execute([
             $empresa_id,
@@ -195,34 +200,32 @@ class Venda
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     public function produtosVendidosFuncionario($empresa_id, $caixa_id, $usuario_id)
     {
         $stmt = $this->pdo->prepare("
-            SELECT
+        SELECT
             p.nome AS produto_nome,
             SUM(iv.quantidade) AS quantidade,
             iv.preco,
             SUM(iv.quantidade * iv.preco) AS total
-            FROM vendas v
-
-            INNER JOIN itens_venda iv
+        FROM vendas v
+        INNER JOIN itens_venda iv
             ON iv.venda_id = v.id
-
-            INNER JOIN produtos p
+        INNER JOIN produtos p
             ON p.id = iv.produto_id
-
-            WHERE v.empresa_id = ?
-            AND v.caixa_id = ?
-            AND v.usuario_id = ?
-
-            GROUP BY
+        WHERE v.empresa_id = ?
+        AND v.caixa_id = ?
+        AND v.usuario_id = ?
+        AND v.data >= CURDATE()
+        AND v.data < CURDATE() + INTERVAL 1 DAY
+        GROUP BY
             iv.produto_id,
             p.nome,
             iv.preco
-
-            ORDER BY p.nome
-        ");
+        ORDER BY p.nome
+    ");
 
         $stmt->execute([
             $empresa_id,
@@ -233,14 +236,20 @@ class Venda
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
     public function quantidadeMercadoriasVendidas($empresa_id, $caixa_id, $usuario_id)
     {
         $stmt = $this->pdo->prepare("
-        SELECT COUNT(DISTINCT v.id) AS quantidade
+        SELECT 
+            COALESCE(SUM(iv.quantidade), 0) AS quantidade
         FROM vendas v
-            WHERE v.empresa_id = ?
-            AND v.caixa_id = ?
-            AND v.usuario_id = ?
+        INNER JOIN itens_venda iv
+            ON iv.venda_id = v.id
+        WHERE v.empresa_id = ?
+        AND v.caixa_id = ?
+        AND v.usuario_id = ?
+        AND v.data >= CURDATE()
+        AND v.data < CURDATE() + INTERVAL 1 DAY
     ");
 
         $stmt->execute([
@@ -251,6 +260,7 @@ class Venda
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
 
     public function totalVendasFuncionario($empresa_id, $caixa_id, $usuario_id)
     {
@@ -260,6 +270,8 @@ class Venda
         WHERE empresa_id = ?
         AND caixa_id = ?
         AND usuario_id = ?
+        AND data >= CURDATE()
+        AND data < CURDATE() + INTERVAL 1 DAY
     ");
 
         $stmt->execute([
@@ -271,20 +283,21 @@ class Venda
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+
     public function resumoCaixa($empresa_id, $caixa_id)
     {
-        $sql = "
-            SELECT
-                forma_pagamento,
-                SUM(total) AS total
-            FROM vendas
-            WHERE empresa_id = ?
-            AND caixa_id = ?
-            GROUP BY forma_pagamento
-            ORDER BY forma_pagamento
-        ";
-
-        $stmt = $this->pdo->prepare($sql);
+        $stmt = $this->pdo->prepare("
+        SELECT
+            forma_pagamento,
+            SUM(total) AS total
+        FROM vendas
+        WHERE empresa_id = ?
+        AND caixa_id = ?
+        AND data >= CURDATE()
+        AND data < CURDATE() + INTERVAL 1 DAY
+        GROUP BY forma_pagamento
+        ORDER BY forma_pagamento
+    ");
 
         $stmt->execute([
             $empresa_id,
