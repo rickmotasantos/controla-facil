@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
@@ -34,7 +34,7 @@
         <div class="text-center mt-2">
             <a href="index.php?action=recuperar_simples">Recuperar senha</a>
         </div>
-        <p class="text-center text-muted small m-3">Gestão simples para sua empresa</p>
+        <p class="text-center text-muted small m-3">Gestao simples para sua empresa</p>
     </div>
 
     <p class="text-white mt-4">&copy; <?php echo date('Y'); ?> - Todos os direitos reservados.</p>
