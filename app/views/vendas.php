@@ -148,10 +148,10 @@ require_once __DIR__ . '/../middlewares/auth.php';
          IMAGEM
     ====================================================== -->
 
-    <div class="d-flex justify-content-center align-items-center h-50 w-100">
+    <div class="d-flex justify-content-center align-items-center">
 
-        <img src="<?= htmlspecialchars($imagemFundo); ?>"
-            class="img-fluid w-100">
+        <img style="height: 250px; width: 100%; object-fit: cover;" src="<?= htmlspecialchars($imagemFundo); ?>"
+            class="img-fluid">
 
     </div>
 

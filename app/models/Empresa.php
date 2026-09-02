@@ -23,6 +23,6 @@ class Empresa {
                 return "/sistema-comercio/public/assets/empresas/{$id}/fundo.{$formato}";
             }
         }
-        return "/sistema-comercio/public/assets/empresas/default/fundo.jpg";
+        return "/sistema-comercio/public/assets/empresas/todos/logoRobControla.png";
     }
 }

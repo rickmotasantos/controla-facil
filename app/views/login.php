@@ -11,7 +11,7 @@
 
 <body class="d-flex flex-column justify-content-center align-items-center vh-100 bg-dark">
     <div class="text-center">
-        <img src="assets/logoMn.png" alt="Logo" style="width:320px; height: 120px; object-fit:contain" class="img-fluid">
+        <img src="assets/empresas/todos/logoRobControla.png" alt="Logo" style="width:320px; height: 120px; object-fit:contain" class="img-fluid">
     </div>
     <?php if (isset($_SESSION['msg'])): ?>
         <div class="alert alert-<?= $_SESSION['msg_tipo'] ?> alert-dismissible fade show" role="alert">
